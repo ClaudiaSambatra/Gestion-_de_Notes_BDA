@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="postgresql-jdbc">
+    <CLASSES>
+      <root url="jar:///usr/share/java/postgresql-jdbc.jar!/" />
+      <root url="file:///usr/lib/jvm/openjfx" />
+    </CLASSES>
+    <JAVADOC />
+    <NATIVE>
+      <root url="file:///usr/lib/jvm/openjfx" />
+    </NATIVE>
+    <SOURCES />
+    <jarDirectory url="file:///usr/lib/jvm/openjfx" recursive="false" />
+  </library>
+</component>
