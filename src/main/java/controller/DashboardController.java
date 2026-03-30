@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.chart.*;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.*;
 import model.AuditNote;
 import model.Etudiant;
@@ -17,8 +18,12 @@ import java.util.List;
 import java.util.Map;
 
 public class DashboardController implements Refreshable {
+
+    // ── Stat labels ───────────────────────────────────────────────────────────
     @FXML
     private Label statEtudiants, statMatieres, statNotes, statMoyenne, statTaux;
+
+    // ── Row 1: Bar + Pie ──────────────────────────────────────────────────────
     @FXML
     private BarChart<String, Number> chartTop;
     @FXML
@@ -28,11 +33,32 @@ public class DashboardController implements Refreshable {
     @FXML
     private PieChart chartDistrib;
     @FXML
+    private StackPane chartTopPane;
+
+    // ── Row 2: Line + Area (NEW) ──────────────────────────────────────────────
+    @FXML
+    private LineChart<String, Number> chartLine;
+    @FXML
+    private CategoryAxis lineXAxis;
+    @FXML
+    private NumberAxis lineYAxis;
+    @FXML
+    private AreaChart<String, Number> chartArea;
+    @FXML
+    private CategoryAxis areaXAxis;
+    @FXML
+    private NumberAxis areaYAxis;
+
+    // ── Row 3: KPI section (NEW) ──────────────────────────────────────────────
+    @FXML
+    private VBox kpiSection;
+
+    // ── Row 4: Activity (admin only) ──────────────────────────────────────────
+    @FXML
     private VBox recentActivity;
     @FXML
-    private VBox activitySection;      // the whole "Activite Recente" card
-    @FXML
-    private StackPane chartTopPane;
+    private VBox activitySection;
+
     private static final DateTimeFormatter DTF = DateTimeFormatter.ofPattern("dd/MM HH:mm");
 
     /**
@@ -41,12 +67,10 @@ public class DashboardController implements Refreshable {
     private boolean showActivity = true;
 
     /**
-     * Called by UserMainController right after loading this view to hide the
-     * recent-activity section that is only relevant for admins.
+     * Called by UserMainController right after loading this view.
      */
     public void setShowActivity(boolean show) {
         this.showActivity = show;
-        // activitySection is injected after initialize(), so guard against null
         if (activitySection != null) {
             activitySection.setVisible(show);
             activitySection.setManaged(show);
@@ -55,7 +79,6 @@ public class DashboardController implements Refreshable {
 
     @FXML
     public void initialize() {
-        // Apply visibility preference injected before initialize (rare) or after (usual)
         if (activitySection != null) {
             activitySection.setVisible(showActivity);
             activitySection.setManaged(showActivity);
@@ -69,9 +92,6 @@ public class DashboardController implements Refreshable {
         Toast.info("Dashboard actualise.");
     }
 
-    /**
-     * Translate DB operation name to French for display in the activity feed.
-     */
     private static String toFrench(String op) {
         return switch (op) {
             case "INSERT" -> "INSERTION";
@@ -84,45 +104,117 @@ public class DashboardController implements Refreshable {
     @Override
     public void refreshData() {
         DataService.loadAsync(() -> {
-            int ne = StatsDAO.countEtudiants(), nm = StatsDAO.countMatieres(), nn = StatsDAO.countNotes();
-            float moy = StatsDAO.moyenneGenerale(), taux = StatsDAO.tauxReussite();
+            int ne = StatsDAO.countEtudiants();
+            int nm = StatsDAO.countMatieres();
+            int nn = StatsDAO.countNotes();
+            float moy = StatsDAO.moyenneGenerale();
+            float taux = StatsDAO.tauxReussite();
             List<Etudiant> top = StatsDAO.topEtudiants(7);
             Map<String, Integer> dist = StatsDAO.noteDistribution();
             List<AuditNote> audits = AuditDAO.getAll();
             return new Object[]{ne, nm, nn, moy, taux, top, dist, audits};
         }, data -> {
-            statEtudiants.setText(String.valueOf(data[0]));
-            statMatieres.setText(String.valueOf(data[1]));
-            statNotes.setText(String.valueOf(data[2]));
+
+            int ne = (int) data[0];
+            int nm = (int) data[1];
+            int nn = (int) data[2];
             float moy = (float) data[3];
-            statMoyenne.setText(moy > 0 ? String.format("%.2f", moy) : "--");
             float taux = (float) data[4];
+
+            // ── Stat labels ───────────────────────────────────────────────────
+            statEtudiants.setText(String.valueOf(ne));
+            statMatieres.setText(String.valueOf(nm));
+            statNotes.setText(String.valueOf(nn));
+            statMoyenne.setText(moy > 0 ? String.format("%.2f", moy) : "--");
             statTaux.setText(taux > 0 ? String.format("%.0f%%", taux) : "--");
 
             @SuppressWarnings("unchecked") List<Etudiant> top = (List<Etudiant>) data[5];
-            XYChart.Series<String, Number> s = new XYChart.Series<>();
-            s.setName("Moyenne");
+            @SuppressWarnings("unchecked") Map<String, Integer> dist = (Map<String, Integer>) data[6];
+
+            // ── BarChart: Top students ────────────────────────────────────────
+            XYChart.Series<String, Number> barSeries = new XYChart.Series<>();
+            barSeries.setName("Moyenne");
             for (Etudiant e : top) {
-                String l = e.getNom().length() > 14 ? e.getNom().substring(0, 14) + "." : e.getNom();
-                s.getData().add(new XYChart.Data<>(l, e.getMoyenne()));
+                String label = e.getNom().length() > 14 ? e.getNom().substring(0, 14) + "." : e.getNom();
+                barSeries.getData().add(new XYChart.Data<>(label, e.getMoyenne()));
             }
             chartTop.getData().clear();
-            chartTop.getData().add(s);
+            chartTop.getData().add(barSeries);
             chartTop.setLegendVisible(false);
             topYAxis.setAutoRanging(false);
             topYAxis.setLowerBound(0);
             topYAxis.setUpperBound(20);
             topYAxis.setTickUnit(5);
 
-            @SuppressWarnings("unchecked") Map<String, Integer> dist = (Map<String, Integer>) data[6];
+            // ── PieChart: Distribution ────────────────────────────────────────
             chartDistrib.setData(FXCollections.observableArrayList(
                     dist.entrySet().stream()
+                            .filter(e -> e.getValue() > 0)
                             .map(e -> new PieChart.Data(e.getKey() + " (" + e.getValue() + ")", e.getValue()))
                             .toList()));
             chartDistrib.setLegendVisible(true);
             chartDistrib.setLabelsVisible(false);
 
-            // ── Activity feed (only built if visible) ────────────────────────
+            // ── LineChart: Top students curve ─────────────────────────────────
+            XYChart.Series<String, Number> lineSeries = new XYChart.Series<>();
+            lineSeries.setName("Moyenne");
+            for (Etudiant e : top) {
+                String label = e.getNom().length() > 11 ? e.getNom().substring(0, 11) + "." : e.getNom();
+                lineSeries.getData().add(new XYChart.Data<>(label, e.getMoyenne()));
+            }
+            chartLine.getData().clear();
+            chartLine.getData().add(lineSeries);
+            chartLine.setLegendVisible(false);
+            lineYAxis.setAutoRanging(false);
+            lineYAxis.setLowerBound(0);
+            lineYAxis.setUpperBound(20);
+            lineYAxis.setTickUnit(5);
+
+            // ── AreaChart: Distribution as a curve ───────────────────────────
+            XYChart.Series<String, Number> areaSeries = new XYChart.Series<>();
+            areaSeries.setName("Etudiants");
+            for (Map.Entry<String, Integer> entry : dist.entrySet()) {
+                areaSeries.getData().add(new XYChart.Data<>(entry.getKey(), entry.getValue()));
+            }
+            chartArea.getData().clear();
+            chartArea.getData().add(areaSeries);
+            chartArea.setLegendVisible(false);
+
+            // ── KPI Progress bars ─────────────────────────────────────────────
+            kpiSection.getChildren().clear();
+
+            // Taux de réussite
+            kpiSection.getChildren().add(buildKpi(
+                    "Taux de reussite", taux / 100.0,
+                    taux > 0 ? String.format("%.0f%%", taux) : "--",
+                    "#16a34a"));
+
+            // Couverture des notes  (notes saisies vs notes possibles)
+            int possible = ne > 0 && nm > 0 ? ne * nm : 0;
+            double coverage = possible > 0 ? Math.min((double) nn / possible, 1.0) : 0;
+            kpiSection.getChildren().add(buildKpi(
+                    "Couverture des notes (" + nn + " / " + possible + ")",
+                    coverage,
+                    String.format("%.0f%%", coverage * 100),
+                    "#0ea5e9"));
+
+            // Moyenne generale / 20
+            kpiSection.getChildren().add(buildKpi(
+                    "Moyenne generale / 20",
+                    moy > 0 ? moy / 20.0 : 0,
+                    moy > 0 ? String.format("%.2f / 20", moy) : "--",
+                    "#f59e0b"));
+
+            // Proportion etudiants avec des notes
+            long withNotes = top.stream().filter(e -> e.getMoyenne() > 0).count();
+            double notedRatio = ne > 0 ? (double) withNotes / ne : 0;
+            kpiSection.getChildren().add(buildKpi(
+                    "Etudiants avec au moins une note",
+                    notedRatio,
+                    ne > 0 ? withNotes + " / " + ne : "--",
+                    "#a855f7"));
+
+            // ── Activity feed (admin only) ────────────────────────────────────
             if (activitySection != null) {
                 activitySection.setVisible(showActivity);
                 activitySection.setManaged(showActivity);
@@ -146,14 +238,14 @@ public class DashboardController implements Refreshable {
                     case "DELETE" -> "▼";
                     default -> "●";
                 };
-                // Display French operation name; keep DB-value CSS class for colour
                 String typeFr = toFrench(a.getTypeOperation());
-                String typeCss = a.getTypeOperation().toLowerCase(); // insert / update / delete
+                String typeCss = a.getTypeOperation().toLowerCase();
                 Label ln = new Label(ic + "  " + typeFr + " - "
                         + (a.getNom() != null ? a.getNom() : "?")
                         + " / " + (a.getDesign() != null ? a.getDesign() : "?"));
                 ln.getStyleClass().addAll("activity-line", "activity-" + typeCss);
-                Label dt = new Label(a.getDateOperation() != null ? a.getDateOperation().format(DTF) : "");
+                Label dt = new Label(a.getDateOperation() != null
+                        ? a.getDateOperation().format(DTF) : "");
                 dt.getStyleClass().add("activity-date");
                 Region sp = new Region();
                 HBox.setHgrow(sp, Priority.ALWAYS);
@@ -162,6 +254,34 @@ public class DashboardController implements Refreshable {
                 row.setAlignment(Pos.CENTER_LEFT);
                 recentActivity.getChildren().add(row);
             }
+
         }, chartTopPane);
+    }
+
+    /**
+     * Build a labeled KPI row: [label] [progress bar ─────────] [value]
+     */
+    private HBox buildKpi(String label, double ratio, String valueText, String color) {
+        Label lbl = new Label(label);
+        lbl.getStyleClass().add("form-label");
+        lbl.setMinWidth(250);
+
+        ProgressBar pb = new ProgressBar(Math.max(0, Math.min(ratio, 1.0)));
+        pb.setMaxWidth(Double.MAX_VALUE);
+        pb.setPrefHeight(12);
+        HBox.setHgrow(pb, Priority.ALWAYS);
+        pb.getStyleClass().add("kpi-bar");
+        // Override the accent color per bar using inline style
+        pb.setStyle("-fx-accent: " + color + ";");
+
+        Label val = new Label(valueText);
+        val.getStyleClass().add("kpi-value");
+        val.setMinWidth(80);
+        val.setAlignment(Pos.CENTER_RIGHT);
+
+        HBox row = new HBox(14, lbl, pb, val);
+        row.setAlignment(Pos.CENTER_LEFT);
+        row.getStyleClass().add("kpi-row");
+        return row;
     }
 }
