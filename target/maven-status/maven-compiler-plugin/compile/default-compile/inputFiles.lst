@@ -12,11 +12,13 @@ C:\Users\Admin\IdeaProjects\Gestion-_de_Notes_BDA\src\main\java\dao\NoteDAO.java
 C:\Users\Admin\IdeaProjects\Gestion-_de_Notes_BDA\src\main\java\util\Refreshable.java
 C:\Users\Admin\IdeaProjects\Gestion-_de_Notes_BDA\src\main\java\util\FxHelper.java
 C:\Users\Admin\IdeaProjects\Gestion-_de_Notes_BDA\src\main\java\controller\DashboardController.java
+C:\Users\Admin\IdeaProjects\Gestion-_de_Notes_BDA\src\main\java\controller\UserMainController_1.java
 C:\Users\Admin\IdeaProjects\Gestion-_de_Notes_BDA\src\main\java\util\DatabaseConnection.java
 C:\Users\Admin\IdeaProjects\Gestion-_de_Notes_BDA\src\main\java\model\Note.java
 C:\Users\Admin\IdeaProjects\Gestion-_de_Notes_BDA\src\main\java\util\AppContext.java
 C:\Users\Admin\IdeaProjects\Gestion-_de_Notes_BDA\src\main\java\controller\AuditController.java
 C:\Users\Admin\IdeaProjects\Gestion-_de_Notes_BDA\src\main\java\dao\StatsDAO.java
+C:\Users\Admin\IdeaProjects\Gestion-_de_Notes_BDA\src\main\java\controller\AdminMainController_1.java
 C:\Users\Admin\IdeaProjects\Gestion-_de_Notes_BDA\src\main\java\model\Matiere.java
 C:\Users\Admin\IdeaProjects\Gestion-_de_Notes_BDA\src\main\java\util\ModalHelper.java
 C:\Users\Admin\IdeaProjects\Gestion-_de_Notes_BDA\src\main\java\application\Main.java
@@ -24,6 +26,7 @@ C:\Users\Admin\IdeaProjects\Gestion-_de_Notes_BDA\src\main\java\model\Etudiant.j
 C:\Users\Admin\IdeaProjects\Gestion-_de_Notes_BDA\src\main\java\util\DataService.java
 C:\Users\Admin\IdeaProjects\Gestion-_de_Notes_BDA\src\main\java\util\AppLog.java
 C:\Users\Admin\IdeaProjects\Gestion-_de_Notes_BDA\src\main\java\util\SessionManager.java
+C:\Users\Admin\IdeaProjects\Gestion-_de_Notes_BDA\src\main\java\application\Launcher.java
 C:\Users\Admin\IdeaProjects\Gestion-_de_Notes_BDA\src\main\java\model\NoteView.java
 C:\Users\Admin\IdeaProjects\Gestion-_de_Notes_BDA\src\main\java\controller\MatiereController.java
 C:\Users\Admin\IdeaProjects\Gestion-_de_Notes_BDA\src\main\java\dao\EtudiantDAO.java

@@ -25,7 +25,7 @@ public class AdminMainController {
     @FXML
     private Label lblUser;
     @FXML
-    private Button btnDashboard, btnEtudiants, btnMatieres, btnNotes, btnAudit, btnTheme;
+    private Button btnDashboard, btnAudit, btnTheme;
 
     private record ViewEntry(Node node, Object controller) {
     }
@@ -39,9 +39,6 @@ public class AdminMainController {
         lblUser.setText(SessionManager.getUtilisateur());
 
         btnDashboard.setOnAction(e -> navigateTo("dashboard", "/view/dashboard.fxml", btnDashboard));
-        btnEtudiants.setOnAction(e -> navigateTo("etudiant", "/view/etudiant.fxml", btnEtudiants));
-        btnMatieres.setOnAction(e -> navigateTo("matiere", "/view/matiere.fxml", btnMatieres));
-        btnNotes.setOnAction(e -> navigateTo("note", "/view/note.fxml", btnNotes));
         btnAudit.setOnAction(e -> navigateTo("audit", "/view/audit.fxml", btnAudit));
 
         btnTheme.setOnAction(e -> {

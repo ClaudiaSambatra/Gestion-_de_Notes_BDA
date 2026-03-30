@@ -6,7 +6,7 @@
 <StackPane fx:id="rootStack" xmlns:fx="http://javafx.com/fxml"
            fx:controller="controller.UserMainController" styleClass="root-stack">
     <HBox styleClass="main-layout">
-        <VBox styleClass="sidebar" prefWidth="200" minWidth="200" maxWidth="200" spacing="4">
+        <VBox styleClass="sidebar" prefWidth="220" minWidth="220" maxWidth="220" spacing="4">
             <padding>
                 <Insets top="20" right="12" bottom="16" left="12"/>
             </padding>
@@ -17,18 +17,17 @@
                 <Label text="GN" styleClass="brand-icon"/>
                 <VBox>
                     <Label text="GestNotes" styleClass="brand-title"/>
-                    <Label text="Saisie des notes" styleClass="brand-sub"/>
+                    <Label text="Espace Enseignant" styleClass="brand-sub"/>
                 </VBox>
             </HBox>
-            <Label text="ACTIONS" styleClass="nav-section-label"/>
-            <Button fx:id="btnNotes" text="     Saisie Notes" styleClass="nav-btn" maxWidth="Infinity"
-            />
-            <Button fx:id="btnAudit" text="     Historique" styleClass="nav-btn" maxWidth="Infinity"
-            />
+            <Label text="NAVIGATION" styleClass="nav-section-label"/>
+            <Button fx:id="btnDashboard" text="     Dashboard" styleClass="nav-btn" maxWidth="Infinity"/>
+            <Button fx:id="btnEtudiants" text="     Etudiants" styleClass="nav-btn" maxWidth="Infinity"/>
+            <Button fx:id="btnMatieres" text="     Matieres" styleClass="nav-btn" maxWidth="Infinity"/>
+            <Button fx:id="btnNotes" text="     Saisie Notes" styleClass="nav-btn" maxWidth="Infinity"/>
             <Region VBox.vgrow="ALWAYS"/>
             <Separator/>
-            <Button fx:id="btnTheme" text="&#9790; Sombre" styleClass="nav-btn,nav-btn-secondary" maxWidth="Infinity"
-            />
+            <Button fx:id="btnTheme" text="&#9790; Sombre" styleClass="nav-btn,nav-btn-secondary" maxWidth="Infinity"/>
             <HBox styleClass="user-pill" alignment="CENTER_LEFT" spacing="8">
                 <padding>
                     <Insets top="8" right="8" bottom="8" left="8"/>

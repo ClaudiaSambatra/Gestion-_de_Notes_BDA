@@ -21,20 +21,11 @@
                 </VBox>
             </HBox>
             <Label text="NAVIGATION" styleClass="nav-section-label"/>
-            <Button fx:id="btnDashboard" text="     Dashboard" styleClass="nav-btn" maxWidth="Infinity"
-            />
-            <Button fx:id="btnEtudiants" text="     Etudiants" styleClass="nav-btn" maxWidth="Infinity"
-            />
-            <Button fx:id="btnMatieres" text="     Matieres" styleClass="nav-btn" maxWidth="Infinity"
-            />
-            <Button fx:id="btnNotes" text="     Notes" styleClass="nav-btn" maxWidth="Infinity"
-            />
-            <Button fx:id="btnAudit" text="     Audit" styleClass="nav-btn" maxWidth="Infinity"
-            />
+            <Button fx:id="btnDashboard" text="     Dashboard" styleClass="nav-btn" maxWidth="Infinity"/>
+            <Button fx:id="btnAudit"     text="     Audit"     styleClass="nav-btn" maxWidth="Infinity"/>
             <Region VBox.vgrow="ALWAYS"/>
             <Separator/>
-            <Button fx:id="btnTheme" text="&#9790; Sombre" styleClass="nav-btn,nav-btn-secondary" maxWidth="Infinity"
-            />
+            <Button fx:id="btnTheme" text="&#9790; Sombre" styleClass="nav-btn,nav-btn-secondary" maxWidth="Infinity"/>
             <HBox styleClass="user-pill" alignment="CENTER_LEFT" spacing="8">
                 <padding>
                     <Insets top="8" right="8" bottom="8" left="8"/>

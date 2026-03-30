@@ -14,6 +14,7 @@ import util.*;
 import java.util.HashMap;
 import java.util.Map;
 
+
 public class UserMainController {
 
     @FXML
@@ -25,7 +26,7 @@ public class UserMainController {
     @FXML
     private Label lblUser;
     @FXML
-    private Button btnNotes, btnAudit, btnTheme;
+    private Button btnDashboard, btnEtudiants, btnMatieres, btnNotes, btnTheme;
 
     private record ViewEntry(Node node, Object controller) {
     }
@@ -38,14 +39,17 @@ public class UserMainController {
         AppContext.init(rootStack, toastContainer);
         lblUser.setText(SessionManager.getUtilisateur());
 
+        btnDashboard.setOnAction(e -> navigateTo("dashboard", "/view/dashboard.fxml", btnDashboard));
+        btnEtudiants.setOnAction(e -> navigateTo("etudiant", "/view/etudiant.fxml", btnEtudiants));
+        btnMatieres.setOnAction(e -> navigateTo("matiere", "/view/matiere.fxml", btnMatieres));
         btnNotes.setOnAction(e -> navigateTo("note", "/view/note.fxml", btnNotes));
-        btnAudit.setOnAction(e -> navigateTo("audit", "/view/audit.fxml", btnAudit));
+
         btnTheme.setOnAction(e -> {
             AppContext.toggleTheme();
             btnTheme.setText(AppContext.isDarkMode() ? "☀ Clair" : "☾ Sombre");
         });
 
-        navigateTo("note", "/view/note.fxml", btnNotes);
+        navigateTo("dashboard", "/view/dashboard.fxml", btnDashboard);
     }
 
     private void navigateTo(String key, String fxml, Button btn) {
@@ -67,7 +71,16 @@ public class UserMainController {
 
         Node view = entry.node();
         if (!contentArea.getChildren().isEmpty()) {
-            FadeTransition fadeOut = getFadeTransition(view);
+            Node cur = contentArea.getChildren().get(0);
+            FadeTransition fadeOut = new FadeTransition(Duration.millis(80), cur);
+            fadeOut.setToValue(0);
+            fadeOut.setOnFinished(e -> {
+                contentArea.getChildren().setAll(view);
+                view.setOpacity(0);
+                FadeTransition fadeIn = new FadeTransition(Duration.millis(150), view);
+                fadeIn.setToValue(1);
+                fadeIn.play();
+            });
             fadeOut.play();
         } else {
             contentArea.getChildren().setAll(view);
@@ -76,19 +89,5 @@ public class UserMainController {
             ft.setToValue(1);
             ft.play();
         }
-    }
-
-    private FadeTransition getFadeTransition(Node view) {
-        Node cur = contentArea.getChildren().get(0);
-        FadeTransition fadeOut = new FadeTransition(Duration.millis(80), cur);
-        fadeOut.setToValue(0);
-        fadeOut.setOnFinished(e -> {
-            contentArea.getChildren().setAll(view);
-            view.setOpacity(0);
-            FadeTransition fadeIn = new FadeTransition(Duration.millis(150), view);
-            fadeIn.setToValue(1);
-            fadeIn.play();
-        });
-        return fadeOut;
     }
 }
