@@ -1,0 +1,84 @@
+<component name="InspectionProjectProfileManager">
+  <profile version="1.0">
+    <option name="myName" value="Project Default" />
+    <inspection_tool class="CssUnknownProperty" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="myCustomPropertiesEnabled" value="true" />
+      <option name="myIgnoreVendorSpecificProperties" value="false" />
+      <option name="myCustomPropertiesList">
+        <value>
+          <list size="69">
+            <item index="0" class="java.lang.String" itemvalue="-fx-background-color" />
+            <item index="1" class="java.lang.String" itemvalue="-fx-text-fill" />
+            <item index="2" class="java.lang.String" itemvalue="-fx-font-size" />
+            <item index="3" class="java.lang.String" itemvalue="-fx-font-weight" />
+            <item index="4" class="java.lang.String" itemvalue="-fx-padding" />
+            <item index="5" class="java.lang.String" itemvalue="-fx-background-radius" />
+            <item index="6" class="java.lang.String" itemvalue="-fx-border-color" />
+            <item index="7" class="java.lang.String" itemvalue="-fx-border-width" />
+            <item index="8" class="java.lang.String" itemvalue="-fx-effect" />
+            <item index="9" class="java.lang.String" itemvalue="-fx-cursor" />
+            <item index="10" class="java.lang.String" itemvalue="-fx-stroke" />
+            <item index="11" class="java.lang.String" itemvalue="-fx-tick-label-fill" />
+            <item index="12" class="java.lang.String" itemvalue="-fx-bar-fill" />
+            <item index="13" class="java.lang.String" itemvalue="-fx-fill" />
+            <item index="14" class="java.lang.String" itemvalue="-fx-pie-color" />
+            <item index="15" class="java.lang.String" itemvalue="-fx-shape" />
+            <item index="16" class="java.lang.String" itemvalue="-fx-border-radius" />
+            <item index="17" class="java.lang.String" itemvalue="-fx-alignment" />
+            <item index="18" class="java.lang.String" itemvalue="-fx-font-style" />
+            <item index="19" class="java.lang.String" itemvalue="-fx-progress-color" />
+            <item index="20" class="java.lang.String" itemvalue="-fx-opacity" />
+            <item index="21" class="java.lang.String" itemvalue="-fx-table-cell-border-color" />
+            <item index="22" class="java.lang.String" itemvalue="-fx-fixed-cell-size" />
+            <item index="23" class="java.lang.String" itemvalue="-fx-prompt-text-fill" />
+            <item index="24" class="java.lang.String" itemvalue="-fx-min-width" />
+            <item index="25" class="java.lang.String" itemvalue="-fx-background" />
+            <item index="26" class="java.lang.String" itemvalue="-gn-sidebar-bg" />
+            <item index="27" class="java.lang.String" itemvalue="-gn-bg" />
+            <item index="28" class="java.lang.String" itemvalue="-gn-sidebar-border" />
+            <item index="29" class="java.lang.String" itemvalue="-gn-card-bg" />
+            <item index="30" class="java.lang.String" itemvalue="-gn-card-border" />
+            <item index="31" class="java.lang.String" itemvalue="-gn-card-shadow" />
+            <item index="32" class="java.lang.String" itemvalue="-gn-text-primary" />
+            <item index="33" class="java.lang.String" itemvalue="-gn-text-secondary" />
+            <item index="34" class="java.lang.String" itemvalue="-gn-text-muted" />
+            <item index="35" class="java.lang.String" itemvalue="-gn-text-hint" />
+            <item index="36" class="java.lang.String" itemvalue="-gn-input-bg" />
+            <item index="37" class="java.lang.String" itemvalue="-gn-input-border" />
+            <item index="38" class="java.lang.String" itemvalue="-gn-input-focus-bg" />
+            <item index="39" class="java.lang.String" itemvalue="-gn-row-border" />
+            <item index="40" class="java.lang.String" itemvalue="-gn-row-hover" />
+            <item index="41" class="java.lang.String" itemvalue="-gn-row-selected" />
+            <item index="42" class="java.lang.String" itemvalue="-gn-selected-text" />
+            <item index="43" class="java.lang.String" itemvalue="-gn-header-border" />
+            <item index="44" class="java.lang.String" itemvalue="-gn-footer-bg" />
+            <item index="45" class="java.lang.String" itemvalue="-gn-footer-border" />
+            <item index="46" class="java.lang.String" itemvalue="-gn-modal-bg" />
+            <item index="47" class="java.lang.String" itemvalue="-gn-modal-border" />
+            <item index="48" class="java.lang.String" itemvalue="-gn-modal-shadow" />
+            <item index="49" class="java.lang.String" itemvalue="-gn-backdrop" />
+            <item index="50" class="java.lang.String" itemvalue="-gn-outline-bg" />
+            <item index="51" class="java.lang.String" itemvalue="-gn-outline-border" />
+            <item index="52" class="java.lang.String" itemvalue="-gn-cancel-bg" />
+            <item index="53" class="java.lang.String" itemvalue="-gn-nav-hover-bg" />
+            <item index="54" class="java.lang.String" itemvalue="-gn-nav-active-bg" />
+            <item index="55" class="java.lang.String" itemvalue="-gn-user-pill-bg" />
+            <item index="56" class="java.lang.String" itemvalue="-gn-scroll-thumb" />
+            <item index="57" class="java.lang.String" itemvalue="-gn-scroll-hover" />
+            <item index="58" class="java.lang.String" itemvalue="-gn-grid-line" />
+            <item index="59" class="java.lang.String" itemvalue="-gn-brand-title" />
+            <item index="60" class="java.lang.String" itemvalue="-gn-brand-sub" />
+            <item index="61" class="java.lang.String" itemvalue="-gn-user-name" />
+            <item index="62" class="java.lang.String" itemvalue="-gn-table-text" />
+            <item index="63" class="java.lang.String" itemvalue="-gn-chart-text" />
+            <item index="64" class="java.lang.String" itemvalue="-gn-chart-tick" />
+            <item index="65" class="java.lang.String" itemvalue="-gn-combo-popup-bg" />
+            <item index="66" class="java.lang.String" itemvalue="-gn-combo-popup-text" />
+            <item index="67" class="java.lang.String" itemvalue="-gn-combo-popup-hover" />
+            <item index="68" class="java.lang.String" itemvalue="-gn-loading-bg" />
+          </list>
+        </value>
+      </option>
+    </inspection_tool>
+  </profile>
+</component>
