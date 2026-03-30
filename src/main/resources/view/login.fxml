@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox fx:id="loginRoot" xmlns:fx="http://javafx.com/fxml" fx:controller="controller.LoginController"
+      styleClass="login-root" alignment="CENTER" spacing="0">
+    <StackPane styleClass="login-card-wrapper" VBox.vgrow="ALWAYS" alignment="CENTER">
+        <VBox styleClass="login-card" spacing="16" alignment="CENTER" maxWidth="340">
+            <padding>
+                <Insets top="36" right="36" bottom="28" left="36"/>
+            </padding>
+            <Label text="GN" styleClass="login-brand"/>
+            <Label fx:id="lblTitle" text="GestNotes" styleClass="login-title"/>
+            <Label fx:id="lblSubtitle" text="" styleClass="login-subtitle"/>
+            <VBox spacing="10">
+                <padding>
+                    <Insets top="8"/>
+                </padding>
+                <Label text="Identifiant" styleClass="form-label"/>
+                <TextField fx:id="txtLogin" promptText="Votre login" styleClass="login-input"/>
+                <Label text="Mot de passe" styleClass="form-label"/>
+                <PasswordField fx:id="txtPassword" promptText="Votre mot de passe" styleClass="login-input"/>
+            </VBox>
+            <Label fx:id="lblError" text="" styleClass="login-error" wrapText="true"/>
+            <Button fx:id="btnLogin" text="Se connecter" onAction="#handleLogin" styleClass="btn-login"
+                    maxWidth="Infinity"/>
+            <Label text="Identifiants par defaut: admin/admin, enseignant/ens123, etudiant/etu123"
+                   styleClass="login-hint" wrapText="true"/>
+        </VBox>
+    </StackPane>
+</VBox>

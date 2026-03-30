@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?><?import javafx.scene.layout.*?><?import javafx.geometry.Insets?>
+<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="controller.UserMgmtController" spacing="16"
+      styleClass="page-content">
+    <padding>
+        <Insets top="28" right="32" bottom="20" left="32"/>
+    </padding>
+    <HBox alignment="CENTER_LEFT" spacing="12">
+        <VBox spacing="2">
+            <Label text="Utilisateurs" styleClass="page-title"/>
+            <Label text="Gestion des comptes" styleClass="page-subtitle"/>
+        </VBox>
+        <Region HBox.hgrow="ALWAYS"/>
+        <TextField fx:id="txtSearch" promptText="Rechercher login, nom, role..." prefWidth="280"
+                   styleClass="search-input"/>
+        <Button text="+ Ajouter" onAction="#handleAdd" styleClass="btn-primary"/>
+        <Button text="Actualiser" onAction="#handleRefresh" styleClass="btn-outline"/>
+    </HBox>
+    <StackPane fx:id="tablePane" VBox.vgrow="ALWAYS">
+        <VBox styleClass="glass-card" spacing="0">
+            <TableView fx:id="table" VBox.vgrow="ALWAYS" styleClass="modern-table">
+                <columns>
+                    <TableColumn text="ID" fx:id="colId"/>
+                    <TableColumn text="Login" fx:id="colLogin"/>
+                    <TableColumn text="Nom" fx:id="colNom"/>
+                    <TableColumn text="Prenom" fx:id="colPrenom"/>
+                    <TableColumn text="Role" fx:id="colRole"/>
+                    <TableColumn text="Actif" fx:id="colActif"/>
+                    <TableColumn text="Actions" fx:id="colActions" sortable="false"/>
+                </columns>
+                <placeholder>
+                    <Label text="Aucun utilisateur" styleClass="table-empty"/>
+                </placeholder>
+            </TableView>
+            <HBox styleClass="table-footer" alignment="CENTER_LEFT" spacing="10">
+                <padding>
+                    <Insets top="10" right="16" bottom="10" left="16"/>
+                </padding>
+                <Label fx:id="lblCount" styleClass="footer-count"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button fx:id="btnPrev" text="&#8592;" onAction="#handlePrev" styleClass="btn-page"/>
+                <Label fx:id="lblPage" styleClass="footer-page"/>
+                <Button fx:id="btnNext" text="&#8594;" onAction="#handleNext" styleClass="btn-page"/>
+            </HBox>
+        </VBox>
+    </StackPane>
+</VBox>
