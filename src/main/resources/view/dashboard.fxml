@@ -63,7 +63,8 @@
                 </VBox>
             </StackPane>
         </HBox>
-        <VBox styleClass="glass-card" spacing="8">
+        <!-- fx:id added so DashboardController can hide this card for non-admin users -->
+        <VBox fx:id="activitySection" styleClass="glass-card" spacing="8">
             <padding>
                 <Insets top="16" right="20" bottom="16" left="20"/>
             </padding>

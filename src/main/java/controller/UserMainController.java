@@ -77,9 +77,14 @@ public class UserMainController {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource(fxml));
                 Node node = loader.load();
                 Object ctrl = loader.getController();
+
                 // Pass logged username to NoteController for audit trail
                 if (ctrl instanceof NoteController nc && loggedUser != null) {
                     nc.setLoggedUsername(loggedUser.getLogin());
+                }
+                // Hide the "Activite Recente" card — it is for admins only
+                if (ctrl instanceof DashboardController dc) {
+                    dc.setShowActivity(false);
                 }
                 return new ViewEntry(node, ctrl);
             } catch (Exception ex) {

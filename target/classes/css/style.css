@@ -46,7 +46,6 @@
     -gn-combo-popup-text: #1e293b;
     -gn-combo-popup-hover: rgba(99, 102, 241, 0.08);
     -gn-loading-bg: rgba(238, 242, 247, 0.6);
-    -gn-login-bg: linear-gradient(to bottom right, #eef2f7, #dbeafe);
     -fx-background-color: -gn-bg;
 }
 
@@ -94,7 +93,6 @@
     -gn-combo-popup-text: #e2e8f0;
     -gn-combo-popup-hover: rgba(99, 102, 241, 0.15);
     -gn-loading-bg: rgba(15, 17, 23, 0.5);
-    -gn-login-bg: linear-gradient(to bottom right, #0f1117, #1a1d2e);
     -fx-background-color: -gn-bg;
 }
 
@@ -102,9 +100,21 @@
     -fx-font-family: "Segoe UI", "Noto Sans", Arial, sans-serif;
 }
 
-/* === LOGIN === */
+/* === LOGIN ===
+   NOTE: login-root is a top-level VBox — NOT inside .root-stack — so
+   all -gn-* looked-up colors are undefined here.  We define the small
+   set of colors we need directly and use literal values everywhere else.
+*/
 .login-root {
-    -fx-background-color: -gn-login-bg;
+    /* Expose just enough lookup tokens for child rules that reference them */
+    -gn-text-primary: #0f172a;
+    -gn-text-secondary: #475569;
+    -gn-text-muted: #64748b;
+    -gn-text-hint: #94a3b8;
+    -gn-input-border: #e2e8f0;
+    -gn-input-focus-bg: white;
+    /* JavaFX gradient syntax (no "to bottom right") */
+    -fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #eef2f7, #dbeafe);
 }
 
 .login-card-wrapper {
@@ -112,16 +122,14 @@
 }
 
 .login-card {
-    -fx-background-color: -gn-modal-bg;
-    -fx-background-radius: 18;
-    -fx-border-color: -gn-modal-border;
-    -fx-border-radius: 18;
-    -fx-border-width: 1;
-    -fx-effect: dropshadow(gaussian, -gn-modal-shadow, 30, 0, 0, 10);
+    /* Transparent — no white box, form floats directly on the gradient */
+    -fx-background-color: transparent;
+    -fx-background-radius: 0;
+    -fx-border-width: 0;
 }
 
 .login-brand {
-    -fx-background-color: linear-gradient(to bottom right, #6366f1, #8b5cf6);
+    -fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #6366f1, #8b5cf6);
     -fx-text-fill: white;
     -fx-font-size: 22px;
     -fx-font-weight: bold;
@@ -132,29 +140,30 @@
 .login-title {
     -fx-font-size: 22px;
     -fx-font-weight: bold;
-    -fx-text-fill: -gn-text-primary;
+    -fx-text-fill: #1e293b;
 }
 
 .login-subtitle {
     -fx-font-size: 13px;
-    -fx-text-fill: -gn-text-muted;
+    -fx-text-fill: #334155;
 }
 
 .login-input {
-    -fx-background-color: -gn-input-bg;
-    -fx-border-color: -gn-input-border;
+    -fx-background-color: rgba(255, 255, 255, 0.85);
+    -fx-border-color: rgba(255, 255, 255, 0.6);
     -fx-border-radius: 10;
     -fx-background-radius: 10;
     -fx-padding: 10 14;
     -fx-font-size: 14px;
     -fx-text-fill: -gn-text-primary;
     -fx-prompt-text-fill: -gn-text-hint;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.08), 6, 0, 0, 2);
 }
 
 .login-input:focused {
     -fx-border-color: #6366f1;
-    -fx-background-color: -gn-input-focus-bg;
-    -fx-effect: dropshadow(gaussian, rgba(99, 102, 241, 0.15), 8, 0, 0, 0);
+    -fx-background-color: rgba(255, 255, 255, 0.97);
+    -fx-effect: dropshadow(gaussian, rgba(99, 102, 241, 0.2), 10, 0, 0, 0);
 }
 
 .login-error {
@@ -164,7 +173,7 @@
 }
 
 .btn-login {
-    -fx-background-color: linear-gradient(to bottom right, #6366f1, #7c3aed);
+    -fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #6366f1, #7c3aed);
     -fx-text-fill: white;
     -fx-font-weight: bold;
     -fx-font-size: 14px;
@@ -175,7 +184,7 @@
 }
 
 .btn-login:hover {
-    -fx-background-color: linear-gradient(to bottom right, #4f46e5, #6d28d9);
+    -fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #4f46e5, #6d28d9);
     -fx-effect: dropshadow(gaussian, rgba(99, 102, 241, 0.35), 8, 0, 0, 2);
 }
 
@@ -258,6 +267,24 @@
 .nav-btn-logout:hover {
     -fx-background-color: rgba(239, 68, 68, 0.08);
     -fx-text-fill: #dc2626;
+}
+
+/* Small toggle button shown alongside the "Utilisateurs" nav entry */
+.nav-btn-toggle {
+    -fx-background-color: transparent;
+    -fx-text-fill: -gn-text-hint;
+    -fx-font-size: 11px;
+    -fx-padding: 4 6;
+    -fx-background-radius: 6;
+    -fx-cursor: hand;
+    -fx-border-width: 0;
+    -fx-min-width: 26;
+    -fx-max-width: 26;
+}
+
+.nav-btn-toggle:hover {
+    -fx-background-color: -gn-nav-hover-bg;
+    -fx-text-fill: #6366f1;
 }
 
 .user-pill {

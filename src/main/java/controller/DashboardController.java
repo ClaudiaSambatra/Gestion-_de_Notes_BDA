@@ -30,11 +30,36 @@ public class DashboardController implements Refreshable {
     @FXML
     private VBox recentActivity;
     @FXML
+    private VBox activitySection;      // the whole "Activite Recente" card
+    @FXML
     private StackPane chartTopPane;
     private static final DateTimeFormatter DTF = DateTimeFormatter.ofPattern("dd/MM HH:mm");
 
+    /**
+     * Whether the "Activite Recente" card should be shown (Admin = true, User = false).
+     */
+    private boolean showActivity = true;
+
+    /**
+     * Called by UserMainController right after loading this view to hide the
+     * recent-activity section that is only relevant for admins.
+     */
+    public void setShowActivity(boolean show) {
+        this.showActivity = show;
+        // activitySection is injected after initialize(), so guard against null
+        if (activitySection != null) {
+            activitySection.setVisible(show);
+            activitySection.setManaged(show);
+        }
+    }
+
     @FXML
     public void initialize() {
+        // Apply visibility preference injected before initialize (rare) or after (usual)
+        if (activitySection != null) {
+            activitySection.setVisible(showActivity);
+            activitySection.setManaged(showActivity);
+        }
         refreshData();
     }
 
@@ -42,6 +67,18 @@ public class DashboardController implements Refreshable {
     private void handleRefresh() {
         refreshData();
         Toast.info("Dashboard actualise.");
+    }
+
+    /**
+     * Translate DB operation name to French for display in the activity feed.
+     */
+    private static String toFrench(String op) {
+        return switch (op) {
+            case "INSERT" -> "INSERTION";
+            case "UPDATE" -> "MODIFICATION";
+            case "DELETE" -> "SUPPRESSION";
+            default -> op;
+        };
     }
 
     @Override
@@ -61,6 +98,7 @@ public class DashboardController implements Refreshable {
             statMoyenne.setText(moy > 0 ? String.format("%.2f", moy) : "--");
             float taux = (float) data[4];
             statTaux.setText(taux > 0 ? String.format("%.0f%%", taux) : "--");
+
             @SuppressWarnings("unchecked") List<Etudiant> top = (List<Etudiant>) data[5];
             XYChart.Series<String, Number> s = new XYChart.Series<>();
             s.setName("Moyenne");
@@ -75,10 +113,22 @@ public class DashboardController implements Refreshable {
             topYAxis.setLowerBound(0);
             topYAxis.setUpperBound(20);
             topYAxis.setTickUnit(5);
+
             @SuppressWarnings("unchecked") Map<String, Integer> dist = (Map<String, Integer>) data[6];
-            chartDistrib.setData(FXCollections.observableArrayList(dist.entrySet().stream().map(e -> new PieChart.Data(e.getKey() + " (" + e.getValue() + ")", e.getValue())).toList()));
+            chartDistrib.setData(FXCollections.observableArrayList(
+                    dist.entrySet().stream()
+                            .map(e -> new PieChart.Data(e.getKey() + " (" + e.getValue() + ")", e.getValue()))
+                            .toList()));
             chartDistrib.setLegendVisible(true);
             chartDistrib.setLabelsVisible(false);
+
+            // ── Activity feed (only built if visible) ────────────────────────
+            if (activitySection != null) {
+                activitySection.setVisible(showActivity);
+                activitySection.setManaged(showActivity);
+            }
+            if (!showActivity) return;
+
             @SuppressWarnings("unchecked") List<AuditNote> audits = (List<AuditNote>) data[7];
             recentActivity.getChildren().clear();
             int lim = Math.min(8, audits.size());
@@ -96,8 +146,13 @@ public class DashboardController implements Refreshable {
                     case "DELETE" -> "▼";
                     default -> "●";
                 };
-                Label ln = new Label(ic + "  " + a.getTypeOperation() + " - " + (a.getNom() != null ? a.getNom() : "?") + " / " + (a.getDesign() != null ? a.getDesign() : "?"));
-                ln.getStyleClass().addAll("activity-line", "activity-" + a.getTypeOperation().toLowerCase());
+                // Display French operation name; keep DB-value CSS class for colour
+                String typeFr = toFrench(a.getTypeOperation());
+                String typeCss = a.getTypeOperation().toLowerCase(); // insert / update / delete
+                Label ln = new Label(ic + "  " + typeFr + " - "
+                        + (a.getNom() != null ? a.getNom() : "?")
+                        + " / " + (a.getDesign() != null ? a.getDesign() : "?"));
+                ln.getStyleClass().addAll("activity-line", "activity-" + typeCss);
                 Label dt = new Label(a.getDateOperation() != null ? a.getDateOperation().format(DTF) : "");
                 dt.getStyleClass().add("activity-date");
                 Region sp = new Region();

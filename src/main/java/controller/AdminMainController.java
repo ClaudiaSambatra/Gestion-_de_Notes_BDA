@@ -28,12 +28,21 @@ public class AdminMainController {
     private Label lblUser, lblUserRole, lblUserInitials;
     @FXML
     private Button btnDashboard, btnUsers, btnAudit, btnTheme, btnLogout;
+    /**
+     * Small ◁/▷ toggle placed next to the Utilisateurs nav button.
+     */
+    @FXML
+    private Button btnToggleUsers;
 
     private record ViewEntry(Node node, Object controller) {
     }
 
     private final Map<String, ViewEntry> viewCache = new HashMap<>();
     private Button activeButton;
+    /**
+     * True when the Utilisateurs section is currently visible.
+     */
+    private boolean usersVisible = true;
 
     public void setLoggedUser(Utilisateur u) {
         lblUser.setText(u.getNomComplet());
@@ -48,6 +57,20 @@ public class AdminMainController {
         btnDashboard.setOnAction(e -> navigateTo("dashboard", "/view/dashboard.fxml", btnDashboard));
         btnUsers.setOnAction(e -> navigateTo("users", "/view/user_mgmt.fxml", btnUsers));
         btnAudit.setOnAction(e -> navigateTo("audit", "/view/audit.fxml", btnAudit));
+
+        // ── Toggle Utilisateurs visibility ──────────────────────────────────
+        btnToggleUsers.setOnAction(e -> {
+            usersVisible = !usersVisible;
+            btnUsers.setVisible(usersVisible);
+            btnUsers.setManaged(usersVisible);
+            // ◁ = visible (click to hide), ▷ = hidden (click to show)
+            btnToggleUsers.setText(usersVisible ? "◁" : "▷");
+            btnToggleUsers.setStyle(usersVisible ? "" : "-fx-text-fill:#6366f1;");
+            // If the user was on the Users page while we hide it, go to Dashboard
+            if (!usersVisible && btnUsers.getStyleClass().contains("nav-active")) {
+                navigateTo("dashboard", "/view/dashboard.fxml", btnDashboard);
+            }
+        });
 
         btnTheme.setOnAction(e -> {
             AppContext.toggleTheme(rootStack);

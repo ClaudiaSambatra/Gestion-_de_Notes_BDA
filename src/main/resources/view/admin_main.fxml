@@ -23,8 +23,16 @@
             <Label text="NAVIGATION" styleClass="nav-section-label"/>
             <Button fx:id="btnDashboard" text="     Dashboard" styleClass="nav-btn" maxWidth="Infinity"
                     alignment="CENTER_LEFT"/>
-            <Button fx:id="btnUsers" text="     Utilisateurs" styleClass="nav-btn" maxWidth="Infinity"
-                    alignment="CENTER_LEFT"/>
+            <!-- Utilisateurs entry + inline hide/show toggle -->
+            <HBox alignment="CENTER_LEFT" spacing="0">
+                <Button fx:id="btnUsers" text="     Utilisateurs" styleClass="nav-btn" HBox.hgrow="ALWAYS"
+                        alignment="CENTER_LEFT"/>
+                <Button fx:id="btnToggleUsers" text="&#x25C1;" styleClass="nav-btn-toggle">
+                    <tooltip>
+                        <Tooltip text="Masquer / Afficher Utilisateurs"/>
+                    </tooltip>
+                </Button>
+            </HBox>
             <Button fx:id="btnAudit" text="     Audit" styleClass="nav-btn" maxWidth="Infinity"
                     alignment="CENTER_LEFT"/>
             <Region VBox.vgrow="ALWAYS"/>
