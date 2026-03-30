@@ -38,29 +38,29 @@ public final class FxHelper {
         return v == (int) v ? String.valueOf((int) v) : String.format("%.2f", v);
     }
 
-    public static VBox labeledField(String label, TextField field) {
-        VBox box = new VBox(4);
-        Label lbl = new Label(label);
-        lbl.getStyleClass().add("form-label");
-        field.getStyleClass().add("modal-input");
-        box.getChildren().addAll(lbl, field);
-        return box;
+    public static VBox labeledField(String label, TextField f) {
+        VBox b = new VBox(4);
+        Label l = new Label(label);
+        l.getStyleClass().add("form-label");
+        f.getStyleClass().add("modal-input");
+        b.getChildren().addAll(l, f);
+        return b;
     }
 
-    public static VBox labeledCombo(String label, ComboBox<?> combo) {
-        VBox box = new VBox(4);
-        Label lbl = new Label(label);
-        lbl.getStyleClass().add("form-label");
-        combo.getStyleClass().add("modal-combo");
-        combo.setMaxWidth(Double.MAX_VALUE);
-        box.getChildren().addAll(lbl, combo);
-        return box;
+    public static VBox labeledCombo(String label, ComboBox<?> c) {
+        VBox b = new VBox(4);
+        Label l = new Label(label);
+        l.getStyleClass().add("form-label");
+        c.getStyleClass().add("modal-combo");
+        c.setMaxWidth(Double.MAX_VALUE);
+        b.getChildren().addAll(l, c);
+        return b;
     }
 
     public static VBox buildForm(VBox... fields) {
-        VBox form = new VBox(12);
-        form.setPadding(new Insets(4, 0, 4, 0));
-        form.getChildren().addAll(fields);
-        return form;
+        VBox f = new VBox(12);
+        f.setPadding(new Insets(4, 0, 4, 0));
+        f.getChildren().addAll(fields);
+        return f;
     }
 }

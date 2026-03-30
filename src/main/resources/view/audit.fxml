@@ -1,17 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.geometry.Insets?>
-
-<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="controller.AuditController"
-      spacing="16" styleClass="page-content">
+<?import javafx.scene.control.*?><?import javafx.scene.layout.*?><?import javafx.geometry.Insets?>
+<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="controller.AuditController" spacing="16"
+      styleClass="page-content">
     <padding>
         <Insets top="28" right="32" bottom="20" left="32"/>
     </padding>
     <HBox alignment="CENTER_LEFT" spacing="12">
         <VBox spacing="2">
             <Label text="Journal d'Audit" styleClass="page-title"/>
-            <Label text="Actualisation auto toutes les 10s" styleClass="page-subtitle"/>
+            <Label text="Auto-refresh 10s" styleClass="page-subtitle"/>
         </VBox>
         <Region HBox.hgrow="ALWAYS"/>
         <Button text="Actualiser" onAction="#handleRefresh" styleClass="btn-outline"/>
@@ -55,23 +52,23 @@
             <Button text="Delete" onAction="#handleFilterDelete" styleClass="chip-btn"/>
         </HBox>
         <Region HBox.hgrow="ALWAYS"/>
-        <TextField fx:id="txtSearch" promptText="Rechercher dans l'audit..." prefWidth="240" styleClass="search-input"/>
+        <TextField fx:id="txtSearch" promptText="Rechercher..." prefWidth="240" styleClass="search-input"/>
     </HBox>
     <StackPane fx:id="tablePane" VBox.vgrow="ALWAYS">
-        <VBox styleClass="glass-card">
+        <VBox styleClass="glass-card" spacing="0">
             <TableView fx:id="table" VBox.vgrow="ALWAYS" styleClass="modern-table">
                 <columns>
-                    <TableColumn text="Operation" fx:id="colType"/>
+                    <TableColumn text="Op." fx:id="colType"/>
                     <TableColumn text="Date" fx:id="colDate"/>
-                    <TableColumn text="N Et." fx:id="colEtudiant"/>
+                    <TableColumn text="N" fx:id="colEtudiant"/>
                     <TableColumn text="Nom" fx:id="colNom"/>
                     <TableColumn text="Matiere" fx:id="colMatiere"/>
                     <TableColumn text="Anc." fx:id="colAncienne"/>
                     <TableColumn text="Nouv." fx:id="colNouvelle"/>
-                    <TableColumn text="User" fx:id="colUtilisateur"/>
+                    <TableColumn text="Utilisateur" fx:id="colUtilisateur"/>
                 </columns>
                 <placeholder>
-                    <Label text="Aucune operation enregistree" styleClass="table-empty"/>
+                    <Label text="Aucune operation" styleClass="table-empty"/>
                 </placeholder>
             </TableView>
             <HBox styleClass="table-footer" alignment="CENTER_LEFT" spacing="10">

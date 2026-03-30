@@ -6,53 +6,49 @@ import javafx.scene.layout.VBox;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+/**
+ * Multi-window context manager.
+ * Each window registers its own rootStack + toastContainer.
+ * Toast/Modal resolve the correct context via the focused window.
+ */
 public final class AppContext {
-
-    private static final Map<StackPane, VBox> toastContainers = new LinkedHashMap<>();
-    private static final Map<StackPane, Boolean> darkModes = new LinkedHashMap<>();
-
-    private static StackPane activeRoot;
+    private static final Map<StackPane, VBox> toastMap = new LinkedHashMap<>();
 
     private AppContext() {
     }
 
-
-    public static void init(StackPane root, VBox toasts) {
-        toastContainers.put(root, toasts);
-        darkModes.put(root, false);
+    public static void register(StackPane root, VBox toasts) {
+        toastMap.put(root, toasts);
         toasts.setPickOnBounds(false);
-
-        root.sceneProperty().addListener((obsScene, oldScene, newScene) -> {
-            if (newScene == null) return;
-            newScene.windowProperty().addListener((obsWin, oldWin, newWin) -> {
-                if (newWin == null) return;
-                newWin.focusedProperty().addListener((obsFocus, wasFocused, isFocused) -> {
-                    if (isFocused) activeRoot = root;
-                });
-            });
-        });
-
-        activeRoot = root;
     }
 
-
-    public static StackPane getRootStack() {
-        return activeRoot;
+    public static void unregister(StackPane root) {
+        toastMap.remove(root);
     }
 
-    public static VBox getToastContainer() {
-        return activeRoot != null ? toastContainers.get(activeRoot) : null;
+    /**
+     * Find the root StackPane of the currently focused window
+     */
+    public static StackPane currentRoot() {
+        for (StackPane sp : toastMap.keySet()) {
+            if (sp.getScene() != null && sp.getScene().getWindow() != null
+                    && sp.getScene().getWindow().isFocused()) return sp;
+        }
+        // Fallback: first available
+        return toastMap.keySet().stream().findFirst().orElse(null);
     }
 
-    public static boolean isDarkMode() {
-        return activeRoot != null && Boolean.TRUE.equals(darkModes.get(activeRoot));
+    public static VBox currentToasts() {
+        StackPane r = currentRoot();
+        return r != null ? toastMap.get(r) : null;
     }
 
-    public static void toggleTheme() {
-        if (activeRoot == null) return;
-        boolean nowDark = !Boolean.TRUE.equals(darkModes.get(activeRoot));
-        darkModes.put(activeRoot, nowDark);
-        if (nowDark) activeRoot.getStyleClass().add("dark");
-        else activeRoot.getStyleClass().remove("dark");
+    public static void toggleTheme(StackPane root) {
+        if (root.getStyleClass().contains("dark")) root.getStyleClass().remove("dark");
+        else root.getStyleClass().add("dark");
+    }
+
+    public static boolean isDark(StackPane root) {
+        return root.getStyleClass().contains("dark");
     }
 }

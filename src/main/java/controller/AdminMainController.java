@@ -8,7 +8,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import javafx.util.Duration;
+import model.Utilisateur;
 import util.*;
 
 import java.util.HashMap;
@@ -23,9 +25,9 @@ public class AdminMainController {
     @FXML
     private StackPane contentArea;
     @FXML
-    private Label lblUser;
+    private Label lblUser, lblUserRole, lblUserInitials;
     @FXML
-    private Button btnDashboard, btnAudit, btnTheme;
+    private Button btnDashboard, btnUsers, btnAudit, btnTheme, btnLogout;
 
     private record ViewEntry(Node node, Object controller) {
     }
@@ -33,46 +35,57 @@ public class AdminMainController {
     private final Map<String, ViewEntry> viewCache = new HashMap<>();
     private Button activeButton;
 
+    public void setLoggedUser(Utilisateur u) {
+        lblUser.setText(u.getNomComplet());
+        lblUserRole.setText(u.getRole());
+        lblUserInitials.setText(u.getInitiales());
+    }
+
     @FXML
     public void initialize() {
-        AppContext.init(rootStack, toastContainer);
-        lblUser.setText(SessionManager.getUtilisateur());
+        AppContext.register(rootStack, toastContainer);
 
         btnDashboard.setOnAction(e -> navigateTo("dashboard", "/view/dashboard.fxml", btnDashboard));
+        btnUsers.setOnAction(e -> navigateTo("users", "/view/user_mgmt.fxml", btnUsers));
         btnAudit.setOnAction(e -> navigateTo("audit", "/view/audit.fxml", btnAudit));
 
         btnTheme.setOnAction(e -> {
-            AppContext.toggleTheme();
-            btnTheme.setText(AppContext.isDarkMode() ? "☀ Clair" : "☾ Sombre");
+            AppContext.toggleTheme(rootStack);
+            btnTheme.setText(AppContext.isDark(rootStack) ? "☀ Clair" : "☾ Sombre");
+        });
+
+        btnLogout.setOnAction(e -> {
+            AppContext.unregister(rootStack);
+            Stage stage = (Stage) rootStack.getScene().getWindow();
+            stage.close();
+            LoginController.openLogin("admin", "GestNotes — Connexion Admin");
         });
 
         navigateTo("dashboard", "/view/dashboard.fxml", btnDashboard);
     }
 
-    private void navigateTo(String key, String fxmlPath, Button btn) {
+    private void navigateTo(String key, String fxml, Button btn) {
         if (activeButton != null) activeButton.getStyleClass().remove("nav-active");
         btn.getStyleClass().add("nav-active");
         activeButton = btn;
 
         ViewEntry entry = viewCache.computeIfAbsent(key, k -> {
             try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+                FXMLLoader loader = new FXMLLoader(getClass().getResource(fxml));
                 Node node = loader.load();
                 return new ViewEntry(node, loader.getController());
             } catch (Exception ex) {
-                AppLog.error("Chargement " + fxmlPath, ex);
-                return new ViewEntry(new Label("Erreur: " + fxmlPath), null);
+                AppLog.error("Load " + fxml, ex);
+                return new ViewEntry(new Label("Erreur: " + fxml), null);
             }
         });
 
-        if (entry.controller() instanceof Refreshable r) {
-            r.refreshData();
-        }
+        if (entry.controller() instanceof Refreshable r) r.refreshData();
 
         Node view = entry.node();
         if (!contentArea.getChildren().isEmpty()) {
-            Node current = contentArea.getChildren().get(0);
-            FadeTransition out = new FadeTransition(Duration.millis(80), current);
+            Node cur = contentArea.getChildren().get(0);
+            FadeTransition out = new FadeTransition(Duration.millis(80), cur);
             out.setToValue(0);
             out.setOnFinished(e -> {
                 contentArea.getChildren().setAll(view);
@@ -87,8 +100,8 @@ public class AdminMainController {
 
     private void fadeIn(Node n) {
         n.setOpacity(0);
-        FadeTransition ft = new FadeTransition(Duration.millis(150), n);
-        ft.setToValue(1);
-        ft.play();
+        FadeTransition f = new FadeTransition(Duration.millis(150), n);
+        f.setToValue(1);
+        f.play();
     }
 }

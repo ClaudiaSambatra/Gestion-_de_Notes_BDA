@@ -1,26 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.chart.*?>
-<?import javafx.geometry.Insets?>
-
-<ScrollPane xmlns:fx="http://javafx.com/fxml" fx:controller="controller.DashboardController"
-            fitToWidth="true" styleClass="page-scroll">
+<?import javafx.scene.control.*?><?import javafx.scene.layout.*?><?import javafx.scene.chart.*?><?import javafx.geometry.Insets?>
+<ScrollPane xmlns:fx="http://javafx.com/fxml" fx:controller="controller.DashboardController" fitToWidth="true"
+            styleClass="page-scroll">
     <VBox spacing="24" styleClass="page-content">
         <padding>
             <Insets top="28" right="32" bottom="28" left="32"/>
         </padding>
-
         <HBox alignment="CENTER_LEFT" spacing="12">
             <VBox spacing="2">
                 <Label text="Dashboard" styleClass="page-title"/>
-                <Label text="Vue d'ensemble du systeme" styleClass="page-subtitle"/>
+                <Label text="Vue d'ensemble" styleClass="page-subtitle"/>
             </VBox>
             <Region HBox.hgrow="ALWAYS"/>
             <Button text="Actualiser" onAction="#handleRefresh" styleClass="btn-outline"/>
         </HBox>
-
-        <HBox spacing="14" styleClass="stats-row">
+        <HBox spacing="14">
             <VBox styleClass="stat-card,stat-blue" HBox.hgrow="ALWAYS">
                 <Label text="Etudiants" styleClass="stat-label"/>
                 <Label fx:id="statEtudiants" text="0" styleClass="stat-value"/>
@@ -42,7 +36,6 @@
                 <Label fx:id="statTaux" text="--" styleClass="stat-value"/>
             </VBox>
         </HBox>
-
         <HBox spacing="16">
             <StackPane fx:id="chartTopPane" HBox.hgrow="ALWAYS">
                 <VBox styleClass="glass-card" spacing="8">
@@ -65,12 +58,11 @@
                     <padding>
                         <Insets top="16" right="16" bottom="16" left="16"/>
                     </padding>
-                    <Label text="Distribution des Notes" styleClass="card-title"/>
+                    <Label text="Distribution Notes" styleClass="card-title"/>
                     <PieChart fx:id="chartDistrib" prefHeight="260" styleClass="custom-chart" animated="false"/>
                 </VBox>
             </StackPane>
         </HBox>
-
         <VBox styleClass="glass-card" spacing="8">
             <padding>
                 <Insets top="16" right="20" bottom="16" left="20"/>

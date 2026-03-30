@@ -6,7 +6,7 @@
       <option name="myIgnoreVendorSpecificProperties" value="false" />
       <option name="myCustomPropertiesList">
         <value>
-          <list size="69">
+          <list size="70">
             <item index="0" class="java.lang.String" itemvalue="-fx-background-color" />
             <item index="1" class="java.lang.String" itemvalue="-fx-text-fill" />
             <item index="2" class="java.lang.String" itemvalue="-fx-font-size" />
@@ -76,6 +76,7 @@
             <item index="66" class="java.lang.String" itemvalue="-gn-combo-popup-text" />
             <item index="67" class="java.lang.String" itemvalue="-gn-combo-popup-hover" />
             <item index="68" class="java.lang.String" itemvalue="-gn-loading-bg" />
+            <item index="69" class="java.lang.String" itemvalue="-fx-font-family" />
           </list>
         </value>
       </option>

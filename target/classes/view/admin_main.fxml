@@ -3,9 +3,9 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 
-<StackPane fx:id="rootStack" xmlns:fx="http://javafx.com/fxml"
-           fx:controller="controller.AdminMainController" styleClass="root-stack">
-    <HBox styleClass="main-layout">
+<StackPane fx:id="rootStack" xmlns:fx="http://javafx.com/fxml" fx:controller="controller.AdminMainController"
+           styleClass="root-stack">
+    <HBox>
         <VBox styleClass="sidebar" prefWidth="220" minWidth="220" maxWidth="220" spacing="4">
             <padding>
                 <Insets top="20" right="12" bottom="16" left="12"/>
@@ -15,25 +15,32 @@
                     <Insets bottom="20" left="4"/>
                 </padding>
                 <Label text="GN" styleClass="brand-icon"/>
-                <VBox>
+                <VBox spacing="0">
                     <Label text="GestNotes" styleClass="brand-title"/>
                     <Label text="Administration" styleClass="brand-sub"/>
                 </VBox>
             </HBox>
             <Label text="NAVIGATION" styleClass="nav-section-label"/>
-            <Button fx:id="btnDashboard" text="     Dashboard" styleClass="nav-btn" maxWidth="Infinity"/>
-            <Button fx:id="btnAudit"     text="     Audit"     styleClass="nav-btn" maxWidth="Infinity"/>
+            <Button fx:id="btnDashboard" text="     Dashboard" styleClass="nav-btn" maxWidth="Infinity"
+                    alignment="CENTER_LEFT"/>
+            <Button fx:id="btnUsers" text="     Utilisateurs" styleClass="nav-btn" maxWidth="Infinity"
+                    alignment="CENTER_LEFT"/>
+            <Button fx:id="btnAudit" text="     Audit" styleClass="nav-btn" maxWidth="Infinity"
+                    alignment="CENTER_LEFT"/>
             <Region VBox.vgrow="ALWAYS"/>
             <Separator/>
-            <Button fx:id="btnTheme" text="&#9790; Sombre" styleClass="nav-btn,nav-btn-secondary" maxWidth="Infinity"/>
+            <Button fx:id="btnTheme" text="&#9790; Sombre" styleClass="nav-btn,nav-btn-secondary" maxWidth="Infinity"
+                    alignment="CENTER_LEFT"/>
+            <Button fx:id="btnLogout" text="     Deconnexion" styleClass="nav-btn,nav-btn-logout" maxWidth="Infinity"
+                    alignment="CENTER_LEFT"/>
             <HBox styleClass="user-pill" alignment="CENTER_LEFT" spacing="8">
                 <padding>
                     <Insets top="8" right="8" bottom="8" left="8"/>
                 </padding>
-                <Label text="A" styleClass="user-avatar"/>
-                <VBox>
-                    <Label fx:id="lblUser" styleClass="user-name"/>
-                    <Label text="Administrateur" styleClass="user-role"/>
+                <Label fx:id="lblUserInitials" text="?" styleClass="user-avatar"/>
+                <VBox spacing="0">
+                    <Label fx:id="lblUser" text="..." styleClass="user-name"/>
+                    <Label fx:id="lblUserRole" text="" styleClass="user-role"/>
                 </VBox>
             </HBox>
         </VBox>

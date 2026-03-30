@@ -1,21 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.geometry.Insets?>
-
-<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="controller.MatiereController"
-      spacing="16" styleClass="page-content">
+<?import javafx.scene.control.*?><?import javafx.scene.layout.*?><?import javafx.geometry.Insets?>
+<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="controller.MatiereController" spacing="16"
+      styleClass="page-content">
     <padding>
         <Insets top="28" right="32" bottom="20" left="32"/>
     </padding>
     <HBox alignment="CENTER_LEFT" spacing="12">
         <VBox spacing="2">
             <Label text="Matieres" styleClass="page-title"/>
-            <Label text="Gestion des matieres et coefficients" styleClass="page-subtitle"/>
+            <Label text="Gestion des matieres" styleClass="page-subtitle"/>
         </VBox>
         <Region HBox.hgrow="ALWAYS"/>
-        <TextField fx:id="txtSearch" promptText="Rechercher designation, numero..." prefWidth="280"
-                   styleClass="search-input"/>
+        <TextField fx:id="txtSearch" promptText="Rechercher..." prefWidth="280" styleClass="search-input"/>
         <Button text="+ Ajouter" onAction="#handleAdd" styleClass="btn-primary"/>
         <Button text="Actualiser" onAction="#handleRefresh" styleClass="btn-outline"/>
     </HBox>
@@ -29,7 +25,7 @@
                     <TableColumn text="Actions" fx:id="colActions" sortable="false"/>
                 </columns>
                 <placeholder>
-                    <Label text="Aucune matiere enregistree" styleClass="table-empty"/>
+                    <Label text="Aucune matiere" styleClass="table-empty"/>
                 </placeholder>
             </TableView>
             <HBox styleClass="table-footer" alignment="CENTER_LEFT" spacing="10">

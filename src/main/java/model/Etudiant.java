@@ -9,9 +9,9 @@ public class Etudiant {
     }
 
     public Etudiant(int n, String nom, float m) {
-        this.numEtudiant = n;
+        numEtudiant = n;
         this.nom = nom;
-        this.moyenne = m;
+        moyenne = m;
     }
 
     public int getNumEtudiant() {

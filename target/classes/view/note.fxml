@@ -1,26 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.geometry.Insets?>
-
-<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="controller.NoteController"
-      spacing="16" styleClass="page-content">
+<?import javafx.scene.control.*?><?import javafx.scene.layout.*?><?import javafx.geometry.Insets?>
+<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="controller.NoteController" spacing="16"
+      styleClass="page-content">
     <padding>
         <Insets top="28" right="32" bottom="20" left="32"/>
     </padding>
     <HBox alignment="CENTER_LEFT" spacing="12">
         <VBox spacing="2">
             <Label text="Notes" styleClass="page-title"/>
-            <Label text="Moyennes recalculees automatiquement par trigger" styleClass="page-subtitle"/>
+            <Label text="Moyennes recalculees automatiquement" styleClass="page-subtitle"/>
         </VBox>
         <Region HBox.hgrow="ALWAYS"/>
-        <TextField fx:id="txtSearch" promptText="Rechercher etudiant, matiere, note..." prefWidth="300"
-                   styleClass="search-input"/>
+        <TextField fx:id="txtSearch" promptText="Rechercher..." prefWidth="300" styleClass="search-input"/>
         <Button text="+ Ajouter" onAction="#handleAdd" styleClass="btn-primary"/>
         <Button text="Actualiser" onAction="#handleRefresh" styleClass="btn-outline"/>
     </HBox>
     <StackPane fx:id="tablePane" VBox.vgrow="ALWAYS">
-        <VBox styleClass="glass-card">
+        <VBox styleClass="glass-card" spacing="0">
             <TableView fx:id="table" VBox.vgrow="ALWAYS" styleClass="modern-table">
                 <columns>
                     <TableColumn text="Etudiant" fx:id="colEtudiant"/>
@@ -30,7 +26,7 @@
                     <TableColumn text="Actions" fx:id="colActions" sortable="false"/>
                 </columns>
                 <placeholder>
-                    <Label text="Aucune note enregistree" styleClass="table-empty"/>
+                    <Label text="Aucune note" styleClass="table-empty"/>
                 </placeholder>
             </TableView>
             <HBox styleClass="table-footer" alignment="CENTER_LEFT" spacing="10">

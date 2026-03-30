@@ -1,9 +1,7 @@
 package controller;
 
 import dao.MatiereDAO;
-import javafx.beans.property.SimpleFloatProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
@@ -18,7 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MatiereController implements Refreshable {
-
     @FXML
     private TextField txtSearch;
     @FXML
@@ -37,12 +34,10 @@ public class MatiereController implements Refreshable {
     private Label lblCount, lblPage;
     @FXML
     private Button btnPrev, btnNext;
-
-    private List<Matiere> allData = new ArrayList<>();
-    private List<Matiere> filtered = new ArrayList<>();
+    private List<Matiere> allData = new ArrayList<>(), filtered = new ArrayList<>();
     private int page = 0;
-    private static final int PAGE_SIZE = 15;
-    private Debouncer debouncer;
+    private static final int PS = 15;
+    private Debouncer deb;
 
     @FXML
     public void initialize() {
@@ -57,62 +52,58 @@ public class MatiereController implements Refreshable {
         colCoef.setStyle("-fx-alignment:CENTER;");
         colActions.setMaxWidth(1f * Integer.MAX_VALUE * 18);
         colActions.setStyle("-fx-alignment:CENTER;");
-        setupActionColumn();
-        debouncer = new Debouncer(Duration.millis(300), () -> {
-            page = 0;
-            applyFilter();
-        });
-        txtSearch.textProperty().addListener((o, a, v) -> debouncer.trigger());
-        refreshData();
-    }
-
-    private void setupActionColumn() {
         colActions.setCellFactory(col -> new TableCell<>() {
             private final Button be = new Button("✎"), bd = new Button("✕");
-            private final HBox box = new HBox(6, be, bd);
+            private final HBox bx = new HBox(6, be, bd);
 
             {
                 be.getStyleClass().addAll("btn-icon", "btn-icon-edit");
                 bd.getStyleClass().addAll("btn-icon", "btn-icon-delete");
-                box.setAlignment(Pos.CENTER);
-                be.setOnAction(e -> openEdit(getTableView().getItems().get(getIndex())));
-                bd.setOnAction(e -> confirmDel(getTableView().getItems().get(getIndex())));
+                bx.setAlignment(Pos.CENTER);
+                be.setOnAction(e -> editModal(getTableView().getItems().get(getIndex())));
+                bd.setOnAction(e -> delModal(getTableView().getItems().get(getIndex())));
             }
 
             @Override
-            protected void updateItem(Void i, boolean empty) {
-                super.updateItem(i, empty);
-                setGraphic(empty ? null : box);
+            protected void updateItem(Void i, boolean em) {
+                super.updateItem(i, em);
+                setGraphic(em ? null : bx);
             }
         });
+        deb = new Debouncer(Duration.millis(300), () -> {
+            page = 0;
+            filter();
+        });
+        txtSearch.textProperty().addListener((o, a, v) -> deb.trigger());
+        refreshData();
     }
 
     @FXML
     private void handleAdd() {
-        TextField tN = new TextField(), tD = new TextField(), tC = new TextField();
-        tN.setPromptText("ex: 1");
-        tD.setPromptText("ex: Maths");
-        tC.setPromptText("ex: 3");
-        var form = FxHelper.buildForm(FxHelper.labeledField("Numero", tN), FxHelper.labeledField("Designation", tD), FxHelper.labeledField("Coefficient", tC));
-        ModalHelper.show("Nouvelle Matiere", form, () -> {
-            if (FxHelper.isValidInt(tN.getText())) {
+        TextField n = new TextField(), d = new TextField(), c = new TextField();
+        n.setPromptText("ex:1");
+        d.setPromptText("Maths");
+        c.setPromptText("3");
+        var f = FxHelper.buildForm(FxHelper.labeledField("Numero", n), FxHelper.labeledField("Designation", d), FxHelper.labeledField("Coefficient", c));
+        ModalHelper.show("Nouvelle Matiere", f, () -> {
+            if (FxHelper.isValidInt(n.getText())) {
                 Toast.error("Numero invalide.");
                 return false;
             }
-            if (tD.getText() == null || tD.getText().isBlank()) {
+            if (d.getText() == null || d.getText().isBlank()) {
                 Toast.error("Designation obligatoire.");
                 return false;
             }
-            if (FxHelper.isValidFloat(tC.getText())) {
+            if (FxHelper.isValidFloat(c.getText())) {
                 Toast.error("Coefficient invalide.");
                 return false;
             }
-            float c = Float.parseFloat(tC.getText().trim());
-            if (c <= 0) {
+            float co = Float.parseFloat(c.getText().trim());
+            if (co <= 0) {
                 Toast.error("Coefficient positif.");
                 return false;
             }
-            if (MatiereDAO.insert(new Matiere(Integer.parseInt(tN.getText().trim()), tD.getText().trim(), c))) {
+            if (MatiereDAO.insert(new Matiere(Integer.parseInt(n.getText().trim()), d.getText().trim(), co))) {
                 Toast.success("Matiere ajoutee.");
                 refreshData();
                 return true;
@@ -122,21 +113,21 @@ public class MatiereController implements Refreshable {
         });
     }
 
-    private void openEdit(Matiere m) {
-        TextField tD = new TextField(m.getDesign()), tC = new TextField(FxHelper.fmt(m.getCoef()));
+    private void editModal(Matiere m) {
+        TextField d = new TextField(m.getDesign()), c = new TextField(FxHelper.fmt(m.getCoef()));
         Label l = new Label("Matiere #" + m.getNumMat());
         l.getStyleClass().add("form-label");
-        var form = FxHelper.buildForm(new javafx.scene.layout.VBox(4, l), FxHelper.labeledField("Designation", tD), FxHelper.labeledField("Coefficient", tC));
-        ModalHelper.show("Modifier Matiere", form, () -> {
-            if (tD.getText() == null || tD.getText().isBlank()) {
+        var f = FxHelper.buildForm(new javafx.scene.layout.VBox(4, l), FxHelper.labeledField("Designation", d), FxHelper.labeledField("Coefficient", c));
+        ModalHelper.show("Modifier", f, () -> {
+            if (d.getText() == null || d.getText().isBlank()) {
                 Toast.error("Designation obligatoire.");
                 return false;
             }
-            if (FxHelper.isValidFloat(tC.getText())) {
+            if (FxHelper.isValidFloat(c.getText())) {
                 Toast.error("Coefficient invalide.");
                 return false;
             }
-            if (MatiereDAO.update(new Matiere(m.getNumMat(), tD.getText().trim(), Float.parseFloat(tC.getText().trim())))) {
+            if (MatiereDAO.update(new Matiere(m.getNumMat(), d.getText().trim(), Float.parseFloat(c.getText().trim())))) {
                 Toast.success("Modifiee.");
                 refreshData();
                 return true;
@@ -146,8 +137,8 @@ public class MatiereController implements Refreshable {
         });
     }
 
-    private void confirmDel(Matiere m) {
-        ModalHelper.confirm("Supprimer", "Supprimer \"" + m.getDesign() + "\" et les notes ?", "Supprimer", "btn-modal-danger", () -> {
+    private void delModal(Matiere m) {
+        ModalHelper.confirm("Supprimer", "Supprimer \"" + m.getDesign() + "\" ?", "Supprimer", "btn-modal-danger", () -> {
             if (MatiereDAO.delete(m.getNumMat())) {
                 Toast.success("Supprimee.");
                 refreshData();
@@ -165,15 +156,15 @@ public class MatiereController implements Refreshable {
     private void handlePrev() {
         if (page > 0) {
             page--;
-            updateTable();
+            upd();
         }
     }
 
     @FXML
     private void handleNext() {
-        if ((page + 1) * PAGE_SIZE < filtered.size()) {
+        if ((page + 1) * PS < filtered.size()) {
             page++;
-            updateTable();
+            upd();
         }
     }
 
@@ -182,21 +173,20 @@ public class MatiereController implements Refreshable {
         DataService.loadAsync(MatiereDAO::getAll, d -> {
             allData = d;
             page = 0;
-            applyFilter();
+            filter();
         }, tablePane);
     }
 
-    private void applyFilter() {
-        String kw = txtSearch.getText() == null ? "" : txtSearch.getText().toLowerCase().trim();
-        filtered = kw.isEmpty() ? new ArrayList<>(allData) : allData.stream()
-                                                             .filter(m -> String.valueOf(m.getNumMat()).contains(kw) || m.getDesign().toLowerCase().contains(kw)).toList();
-        updateTable();
+    private void filter() {
+        String k = txtSearch.getText() == null ? "" : txtSearch.getText().toLowerCase().trim();
+        filtered = k.isEmpty() ? new ArrayList<>(allData) : allData.stream().filter(m -> String.valueOf(m.getNumMat()).contains(k) || m.getDesign().toLowerCase().contains(k)).toList();
+        upd();
     }
 
-    private void updateTable() {
-        int tp = Math.max(1, (int) Math.ceil((double) filtered.size() / PAGE_SIZE));
+    private void upd() {
+        int tp = Math.max(1, (int) Math.ceil((double) filtered.size() / PS));
         page = Math.min(page, tp - 1);
-        int f = page * PAGE_SIZE, t = Math.min(f + PAGE_SIZE, filtered.size());
+        int f = page * PS, t = Math.min(f + PS, filtered.size());
         table.setItems(FXCollections.observableArrayList(filtered.subList(f, t)));
         lblCount.setText(filtered.size() + " matiere(s)");
         lblPage.setText("Page " + (page + 1) + " / " + tp);

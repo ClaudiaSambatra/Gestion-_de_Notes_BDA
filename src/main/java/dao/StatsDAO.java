@@ -24,11 +24,27 @@ public class StatsDAO {
         return cnt("audit_note");
     }
 
+    public static int countUsers() {
+        return cnt("utilisateur");
+    }
+
     public static float moyenneGenerale() {
         try (Connection c = DatabaseConnection.getConnection(); ResultSet r = c.createStatement().executeQuery("SELECT COALESCE(AVG(moyenne),0) FROM etudiant WHERE moyenne>0")) {
             if (r.next()) return r.getFloat(1);
         } catch (Exception e) {
-            AppLog.error("StatsDAO.moyenne", e);
+            AppLog.error("StatsDAO.moy", e);
+        }
+        return 0;
+    }
+
+    public static float tauxReussite() {
+        try (Connection c = DatabaseConnection.getConnection(); ResultSet r = c.createStatement().executeQuery("SELECT COUNT(*) FILTER(WHERE moyenne>=10) AS ok,COUNT(*) AS tot FROM etudiant WHERE moyenne>0")) {
+            if (r.next()) {
+                int t = r.getInt("tot");
+                return t > 0 ? (float) r.getInt("ok") / t * 100 : 0;
+            }
+        } catch (Exception e) {
+            AppLog.error("StatsDAO.taux", e);
         }
         return 0;
     }
@@ -63,22 +79,9 @@ public class StatsDAO {
                 m.merge(b, 1, Integer::sum);
             }
         } catch (Exception e) {
-            AppLog.error("StatsDAO.distrib", e);
+            AppLog.error("StatsDAO.dist", e);
         }
         return m;
-    }
-
-    public static float tauxReussite() {
-        try (Connection c = DatabaseConnection.getConnection(); ResultSet r = c.createStatement().executeQuery(
-                "SELECT COUNT(*) FILTER(WHERE moyenne>=10) AS ok, COUNT(*) AS tot FROM etudiant WHERE moyenne>0")) {
-            if (r.next()) {
-                int tot = r.getInt("tot");
-                return tot > 0 ? (float) r.getInt("ok") / tot * 100 : 0;
-            }
-        } catch (Exception e) {
-            AppLog.error("StatsDAO.taux", e);
-        }
-        return 0;
     }
 
     private static int cnt(String t) {

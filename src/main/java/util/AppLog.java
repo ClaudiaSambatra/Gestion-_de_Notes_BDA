@@ -12,23 +12,18 @@ public final class AppLog {
         h.setFormatter(new Formatter() {
             @Override
             public String format(LogRecord r) {
-                String src = r.getSourceClassName();
-                if (src != null) {
-                    int d = src.lastIndexOf('.');
-                    if (d >= 0) src = src.substring(d + 1);
+                String s = r.getSourceClassName();
+                if (s != null) {
+                    int d = s.lastIndexOf('.');
+                    if (d >= 0) s = s.substring(d + 1);
                 }
-                StringBuilder sb = new StringBuilder();
-                sb.append(String.format("[%-7s] %-20s %s%n", r.getLevel(), src, formatMessage(r)));
+                StringBuilder b = new StringBuilder();
+                b.append(String.format("[%-7s] %-20s %s%n", r.getLevel(), s, formatMessage(r)));
                 if (r.getThrown() != null) {
                     Throwable t = r.getThrown();
-                    sb.append("  ").append(t.getClass().getSimpleName()).append(": ").append(t.getMessage()).append("\n");
-                    for (StackTraceElement el : t.getStackTrace()) {
-                        String cn = el.getClassName();
-                        if (cn.startsWith("dao.") || cn.startsWith("util.") || cn.startsWith("controller.") || cn.startsWith("application."))
-                            sb.append("    at ").append(el).append("\n");
-                    }
+                    b.append("  ").append(t.getClass().getSimpleName()).append(": ").append(t.getMessage()).append("\n");
                 }
-                return sb.toString();
+                return b.toString();
             }
         });
         L.addHandler(h);

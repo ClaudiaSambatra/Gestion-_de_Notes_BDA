@@ -11,66 +11,53 @@ import javafx.scene.layout.VBox;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-
 public final class DataService {
-
     private DataService() {
     }
 
+    public static <T> void loadAsync(Supplier<T> bg, Consumer<T> ok, Node target) {
+        loadAsync(bg, ok, ex -> Toast.error("Erreur de chargement."), target);
+    }
 
-    public static <T> void loadAsync(Supplier<T> bgWork, Consumer<T> onSuccess, Consumer<Throwable> onError, Node target) {
-        Node spinner = null;
-        if (target instanceof StackPane sp) {
-            spinner = createSpinner();
-            sp.getChildren().add(spinner);
+    public static <T> void loadAsync(Supplier<T> bg, Consumer<T> ok, Consumer<Throwable> err, Node target) {
+        Node sp = null;
+        if (target instanceof StackPane s) {
+            sp = createSpinner();
+            s.getChildren().add(sp);
         }
-
-        final Node spinnerRef = spinner;
-
+        final Node ref = sp;
         Task<T> task = new Task<>() {
             @Override
             protected T call() {
-                return bgWork.get();
+                return bg.get();
             }
         };
-
         task.setOnSucceeded(e -> {
-            removeSpinner(target, spinnerRef);
-            onSuccess.accept(task.getValue());
+            rmSpin(target, ref);
+            ok.accept(task.getValue());
         });
-
         task.setOnFailed(e -> {
-            removeSpinner(target, spinnerRef);
-            Throwable ex = task.getException();
-            AppLog.error("DataService async failed", ex);
-            if (onError != null) onError.accept(ex);
+            rmSpin(target, ref);
+            AppLog.error("DataService", task.getException());
+            if (err != null) err.accept(task.getException());
         });
-
         Thread t = new Thread(task);
         t.setDaemon(true);
         t.start();
-    }
-
-
-    public static <T> void loadAsync(Supplier<T> bgWork, Consumer<T> onSuccess, Node target) {
-        loadAsync(bgWork, onSuccess, ex -> Toast.error("Erreur de chargement."), target);
     }
 
     private static Node createSpinner() {
         ProgressIndicator pi = new ProgressIndicator();
         pi.setMaxSize(36, 36);
         pi.getStyleClass().add("loading-spinner");
-
-        VBox box = new VBox(pi);
-        box.setAlignment(Pos.CENTER);
-        box.getStyleClass().add("loading-overlay");
-        box.setPickOnBounds(true);
-        return box;
+        VBox b = new VBox(pi);
+        b.setAlignment(Pos.CENTER);
+        b.getStyleClass().add("loading-overlay");
+        b.setPickOnBounds(true);
+        return b;
     }
 
-    private static void removeSpinner(Node target, Node spinner) {
-        if (spinner != null && target instanceof StackPane sp) {
-            Platform.runLater(() -> sp.getChildren().remove(spinner));
-        }
+    private static void rmSpin(Node t, Node s) {
+        if (s != null && t instanceof StackPane sp) Platform.runLater(() -> sp.getChildren().remove(s));
     }
 }

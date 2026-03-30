@@ -8,12 +8,13 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import javafx.util.Duration;
+import model.Utilisateur;
 import util.*;
 
 import java.util.HashMap;
 import java.util.Map;
-
 
 public class UserMainController {
 
@@ -24,20 +25,27 @@ public class UserMainController {
     @FXML
     private StackPane contentArea;
     @FXML
-    private Label lblUser;
+    private Label lblUser, lblUserRole, lblUserInitials;
     @FXML
-    private Button btnDashboard, btnEtudiants, btnMatieres, btnNotes, btnTheme;
+    private Button btnDashboard, btnEtudiants, btnMatieres, btnNotes, btnTheme, btnLogout;
 
     private record ViewEntry(Node node, Object controller) {
     }
 
     private final Map<String, ViewEntry> cache = new HashMap<>();
     private Button activeButton;
+    private Utilisateur loggedUser;
+
+    public void setLoggedUser(Utilisateur u) {
+        this.loggedUser = u;
+        lblUser.setText(u.getNomComplet());
+        lblUserRole.setText(u.getRole());
+        lblUserInitials.setText(u.getInitiales());
+    }
 
     @FXML
     public void initialize() {
-        AppContext.init(rootStack, toastContainer);
-        lblUser.setText(SessionManager.getUtilisateur());
+        AppContext.register(rootStack, toastContainer);
 
         btnDashboard.setOnAction(e -> navigateTo("dashboard", "/view/dashboard.fxml", btnDashboard));
         btnEtudiants.setOnAction(e -> navigateTo("etudiant", "/view/etudiant.fxml", btnEtudiants));
@@ -45,8 +53,15 @@ public class UserMainController {
         btnNotes.setOnAction(e -> navigateTo("note", "/view/note.fxml", btnNotes));
 
         btnTheme.setOnAction(e -> {
-            AppContext.toggleTheme();
-            btnTheme.setText(AppContext.isDarkMode() ? "☀ Clair" : "☾ Sombre");
+            AppContext.toggleTheme(rootStack);
+            btnTheme.setText(AppContext.isDark(rootStack) ? "☀ Clair" : "☾ Sombre");
+        });
+
+        btnLogout.setOnAction(e -> {
+            AppContext.unregister(rootStack);
+            Stage stage = (Stage) rootStack.getScene().getWindow();
+            stage.close();
+            LoginController.openLogin("user", "GestNotes — Connexion Utilisateur");
         });
 
         navigateTo("dashboard", "/view/dashboard.fxml", btnDashboard);
@@ -60,9 +75,15 @@ public class UserMainController {
         ViewEntry entry = cache.computeIfAbsent(key, k -> {
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource(fxml));
-                return new ViewEntry(loader.load(), loader.getController());
+                Node node = loader.load();
+                Object ctrl = loader.getController();
+                // Pass logged username to NoteController for audit trail
+                if (ctrl instanceof NoteController nc && loggedUser != null) {
+                    nc.setLoggedUsername(loggedUser.getLogin());
+                }
+                return new ViewEntry(node, ctrl);
             } catch (Exception ex) {
-                AppLog.error("Chargement " + fxml, ex);
+                AppLog.error("Load " + fxml, ex);
                 return new ViewEntry(new Label("Erreur"), null);
             }
         });
@@ -72,22 +93,23 @@ public class UserMainController {
         Node view = entry.node();
         if (!contentArea.getChildren().isEmpty()) {
             Node cur = contentArea.getChildren().get(0);
-            FadeTransition fadeOut = new FadeTransition(Duration.millis(80), cur);
-            fadeOut.setToValue(0);
-            fadeOut.setOnFinished(e -> {
+            FadeTransition out = new FadeTransition(Duration.millis(80), cur);
+            out.setToValue(0);
+            out.setOnFinished(e -> {
                 contentArea.getChildren().setAll(view);
-                view.setOpacity(0);
-                FadeTransition fadeIn = new FadeTransition(Duration.millis(150), view);
-                fadeIn.setToValue(1);
-                fadeIn.play();
+                fadeIn(view);
             });
-            fadeOut.play();
+            out.play();
         } else {
             contentArea.getChildren().setAll(view);
-            view.setOpacity(0);
-            FadeTransition ft = new FadeTransition(Duration.millis(150), view);
-            ft.setToValue(1);
-            ft.play();
+            fadeIn(view);
         }
+    }
+
+    private void fadeIn(Node n) {
+        n.setOpacity(0);
+        FadeTransition f = new FadeTransition(Duration.millis(150), n);
+        f.setToValue(1);
+        f.play();
     }
 }

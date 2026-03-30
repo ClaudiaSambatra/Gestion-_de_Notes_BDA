@@ -3,8 +3,7 @@ package controller;
 import dao.AuditDAO;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
@@ -19,7 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AuditController implements Refreshable {
-
     @FXML
     private TextField txtSearch;
     @FXML
@@ -34,71 +32,59 @@ public class AuditController implements Refreshable {
     private Label lblInserts, lblUpdates, lblDeletes, lblTotal, lblPage;
     @FXML
     private Button btnPrev, btnNext;
-
     private static final DateTimeFormatter DTF = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-    private List<AuditNote> allData = new ArrayList<>();
-    private List<AuditNote> filtered = new ArrayList<>();
+    private List<AuditNote> allData = new ArrayList<>(), filtered = new ArrayList<>();
     private int page = 0;
-    private static final int PAGE_SIZE = 18;
+    private static final int PS = 18;
     private String typeFilter = null;
-    private Debouncer debouncer;
+    private Debouncer deb;
 
     @FXML
     public void initialize() {
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
-
         colType.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getTypeOperation()));
         colType.setMaxWidth(1f * Integer.MAX_VALUE * 12);
-        colType.setStyle("-fx-alignment: CENTER;");
+        colType.setStyle("-fx-alignment:CENTER;");
         colType.setCellFactory(col -> new TableCell<>() {
             @Override
-            protected void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
+            protected void updateItem(String it, boolean em) {
+                super.updateItem(it, em);
+                if (em || it == null) {
                     setGraphic(null);
                     return;
                 }
-                Label badge = new Label(item);
-                badge.getStyleClass().addAll("badge", "badge-" + item.toLowerCase());
-                setGraphic(badge);
+                Label b = new Label(it);
+                b.getStyleClass().addAll("badge", "badge-" + it.toLowerCase());
+                setGraphic(b);
                 setAlignment(Pos.CENTER);
             }
         });
-
-        colDate.setCellValueFactory(c -> new SimpleStringProperty(
-                c.getValue().getDateOperation() != null ? c.getValue().getDateOperation().format(DTF) : ""));
+        colDate.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getDateOperation() != null ? c.getValue().getDateOperation().format(DTF) : ""));
         colDate.setMaxWidth(1f * Integer.MAX_VALUE * 16);
-
         colEtudiant.setCellValueFactory(c -> new SimpleStringProperty(String.valueOf(c.getValue().getNumEtudiant())));
         colEtudiant.setMaxWidth(1f * Integer.MAX_VALUE * 8);
-        colEtudiant.setStyle("-fx-alignment: CENTER;");
-
+        colEtudiant.setStyle("-fx-alignment:CENTER;");
         colNom.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getNom()));
-        colNom.setMaxWidth(1f * Integer.MAX_VALUE * 16);
-
+        colNom.setMaxWidth(1f * Integer.MAX_VALUE * 14);
         colMatiere.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getDesign()));
         colMatiere.setMaxWidth(1f * Integer.MAX_VALUE * 14);
-
         colAncienne.setCellValueFactory(c -> new SimpleObjectProperty<>(c.getValue().getNoteAncien()));
         colAncienne.setMaxWidth(1f * Integer.MAX_VALUE * 8);
-        colAncienne.setStyle("-fx-alignment: CENTER;");
-        colAncienne.setCellFactory(col -> floatCell());
-
+        colAncienne.setStyle("-fx-alignment:CENTER;");
+        colAncienne.setCellFactory(col -> fc());
         colNouvelle.setCellValueFactory(c -> new SimpleObjectProperty<>(c.getValue().getNoteNouv()));
         colNouvelle.setMaxWidth(1f * Integer.MAX_VALUE * 8);
-        colNouvelle.setStyle("-fx-alignment: CENTER;");
-        colNouvelle.setCellFactory(col -> floatCell());
-
+        colNouvelle.setStyle("-fx-alignment:CENTER;");
+        colNouvelle.setCellFactory(col -> fc());
         colUtilisateur.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getUtilisateur()));
-        colUtilisateur.setMaxWidth(1f * Integer.MAX_VALUE * 12);
-
+        colUtilisateur.setMaxWidth(1f * Integer.MAX_VALUE * 14);
         table.setRowFactory(tv -> new TableRow<>() {
             @Override
-            protected void updateItem(AuditNote item, boolean empty) {
-                super.updateItem(item, empty);
+            protected void updateItem(AuditNote it, boolean em) {
+                super.updateItem(it, em);
                 getStyleClass().removeAll("row-insert", "row-update", "row-delete");
-                if (item != null) {
-                    switch (item.getTypeOperation()) {
+                if (it != null) {
+                    switch (it.getTypeOperation()) {
                         case "INSERT" -> getStyleClass().add("row-insert");
                         case "UPDATE" -> getStyleClass().add("row-update");
                         case "DELETE" -> getStyleClass().add("row-delete");
@@ -106,26 +92,18 @@ public class AuditController implements Refreshable {
                 }
             }
         });
-
-        debouncer = new Debouncer(Duration.millis(300), () -> {
+        deb = new Debouncer(Duration.millis(300), () -> {
             page = 0;
             applyFilter();
         });
-        txtSearch.textProperty().addListener((o, a, v) -> debouncer.trigger());
-
-        Timeline autoRefresh = new Timeline(new KeyFrame(Duration.seconds(10), e -> silentRefresh()));
-        autoRefresh.setCycleCount(Timeline.INDEFINITE);
-        autoRefresh.play();
-
-        refreshData();
-    }
-
-
-    private void silentRefresh() {
-        DataService.loadAsync(AuditDAO::getAll, d -> {
+        txtSearch.textProperty().addListener((o, a, v) -> deb.trigger());
+        Timeline poll = new Timeline(new KeyFrame(Duration.seconds(10), e -> DataService.loadAsync(AuditDAO::getAll, d -> {
             allData = d;
             applyFilter();
-        }, null);
+        }, null)));
+        poll.setCycleCount(Timeline.INDEFINITE);
+        poll.play();
+        refreshData();
     }
 
     @FXML
@@ -166,15 +144,15 @@ public class AuditController implements Refreshable {
     private void handlePrev() {
         if (page > 0) {
             page--;
-            updateTable();
+            upd();
         }
     }
 
     @FXML
     private void handleNext() {
-        if ((page + 1) * PAGE_SIZE < filtered.size()) {
+        if ((page + 1) * PS < filtered.size()) {
             page++;
-            updateTable();
+            upd();
         }
     }
 
@@ -189,52 +167,42 @@ public class AuditController implements Refreshable {
     }
 
     private void applyFilter() {
-        String kw = txtSearch.getText() == null ? "" : txtSearch.getText().toLowerCase().trim();
-        filtered = allData.stream()
-                .filter(a -> typeFilter == null || a.getTypeOperation().equals(typeFilter))
-                .filter(a -> {
-                    if (kw.isEmpty()) return true;
-                    return (a.getNom() != null && a.getNom().toLowerCase().contains(kw))
-                            || (a.getDesign() != null && a.getDesign().toLowerCase().contains(kw))
-                            || a.getTypeOperation().toLowerCase().contains(kw)
-                            || String.valueOf(a.getNumEtudiant()).contains(kw)
-                            || (a.getUtilisateur() != null && a.getUtilisateur().toLowerCase().contains(kw));
-                }).toList();
-        updateCounters();
-        updateTable();
-    }
-
-    private void updateCounters() {
+        String k = txtSearch.getText() == null ? "" : txtSearch.getText().toLowerCase().trim();
+        filtered = allData.stream().filter(a -> typeFilter == null || a.getTypeOperation().equals(typeFilter)).filter(a -> {
+            if (k.isEmpty()) return true;
+            return (a.getNom() != null && a.getNom().toLowerCase().contains(k)) || (a.getDesign() != null && a.getDesign().toLowerCase().contains(k)) || a.getTypeOperation().toLowerCase().contains(k) || String.valueOf(a.getNumEtudiant()).contains(k) || (a.getUtilisateur() != null && a.getUtilisateur().toLowerCase().contains(k));
+        }).toList();
         long ins = filtered.stream().filter(a -> "INSERT".equals(a.getTypeOperation())).count();
-        long upd = filtered.stream().filter(a -> "UPDATE".equals(a.getTypeOperation())).count();
+        long up = filtered.stream().filter(a -> "UPDATE".equals(a.getTypeOperation())).count();
         long del = filtered.stream().filter(a -> "DELETE".equals(a.getTypeOperation())).count();
         lblInserts.setText(String.valueOf(ins));
-        lblUpdates.setText(String.valueOf(upd));
+        lblUpdates.setText(String.valueOf(up));
         lblDeletes.setText(String.valueOf(del));
         lblTotal.setText(String.valueOf(filtered.size()));
+        upd();
     }
 
-    private void updateTable() {
-        int tp = Math.max(1, (int) Math.ceil((double) filtered.size() / PAGE_SIZE));
+    private void upd() {
+        int tp = Math.max(1, (int) Math.ceil((double) filtered.size() / PS));
         page = Math.min(page, tp - 1);
-        int from = page * PAGE_SIZE, to = Math.min(from + PAGE_SIZE, filtered.size());
-        table.setItems(FXCollections.observableArrayList(filtered.subList(from, to)));
+        int f = page * PS, t = Math.min(f + PS, filtered.size());
+        table.setItems(FXCollections.observableArrayList(filtered.subList(f, t)));
         lblPage.setText("Page " + (page + 1) + " / " + tp);
         btnPrev.setDisable(page <= 0);
         btnNext.setDisable(page >= tp - 1);
     }
 
-    private static TableCell<AuditNote, Float> floatCell() {
+    private static TableCell<AuditNote, Float> fc() {
         return new TableCell<>() {
             @Override
-            protected void updateItem(Float item, boolean empty) {
-                super.updateItem(item, empty);
+            protected void updateItem(Float it, boolean em) {
+                super.updateItem(it, em);
                 setAlignment(Pos.CENTER);
-                if (empty || item == null) {
+                if (em || it == null) {
                     setText("-");
-                    setStyle("-fx-alignment:CENTER; -fx-text-fill: -gn-text-hint;");
+                    setStyle("-fx-alignment:CENTER;-fx-text-fill:-gn-text-hint;");
                 } else {
-                    setText(String.format("%.1f", item));
+                    setText(String.format("%.1f", it));
                     setStyle("-fx-alignment:CENTER;");
                 }
             }
