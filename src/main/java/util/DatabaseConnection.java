@@ -5,7 +5,7 @@ import java.sql.*;
 public class DatabaseConnection {
     private static final String HOST = "localhost";
     private static final int PORT = 5432;
-    private static final String DB = "NOTE", USER = "postgres", PASS = "Fanilost*40";
+    private static final String DB = "NOTE", USER = "postgres", PASS = "1234";
     private static final String URL_DB = "jdbc:postgresql://" + HOST + ":" + PORT + "/" + DB;
     private static final String URL_PG = "jdbc:postgresql://" + HOST + ":" + PORT + "/postgres";
     private static volatile boolean init = false;
